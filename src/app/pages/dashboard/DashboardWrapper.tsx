@@ -119,7 +119,6 @@ const DashboardPage: FC = () => (
 );
 
 const DashboardWrapper: FC = () => {
-  const intl = useIntl();
   return (
     <>
       <PageTitle breadcrumbs={[]}>Ana Sayfa</PageTitle>

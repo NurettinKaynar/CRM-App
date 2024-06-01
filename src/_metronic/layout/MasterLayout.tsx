@@ -37,21 +37,21 @@ const MasterLayout = () => {
               <div className="d-flex flex-column flex-column-fluid">
                 <Outlet />
               </div>
-              <FooterWrapper />
+              {/* <FooterWrapper /> */}
             </div>
           </div>
         </div>
       </div>
 
       {/* begin:: Drawers */}
-      <ActivityDrawer />
-      <RightToolbar />
-      <DrawerMessenger />
+      {/* <ActivityDrawer /> */}
+      {/* <RightToolbar /> */}
+      {/* <DrawerMessenger /> */}
       {/* end:: Drawers */}
 
       {/* begin:: Modals */}
-      <InviteUsers />
-      <UpgradePlan />
+      {/* <InviteUsers /> */}
+      {/* <UpgradePlan /> */}
       {/* end:: Modals */}
       <ScrollTop />
     </PageDataProvider>

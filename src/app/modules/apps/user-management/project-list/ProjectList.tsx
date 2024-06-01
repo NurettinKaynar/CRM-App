@@ -25,7 +25,7 @@ const ProjectListWrapper = () => (
   <QueryRequestProvider>
     <QueryResponseProvider>
       <ListViewProvider>
-        <ToolbarWrapper />
+        {/* <ToolbarWrapper /> */}
         <Content>
           <ProjectList />
         </Content>

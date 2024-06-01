@@ -1,8 +1,10 @@
 import { KTIcon } from "../../../../../../../_metronic/helpers";
+import { CreateAppModal } from "../../../../../../../_metronic/partials";
 import { useListView } from "../../core/ListViewProvider";
 import { UsersListFilter } from "./UsersListFilter";
-
+import React, { useState } from "react";
 const UsersListToolbar = () => {
+  const [showCreateAppModal, setShowCreateAppModal] = useState<boolean>(false);
   const { setItemIdForUpdate } = useListView();
   const openAddUserModal = () => {
     setItemIdForUpdate(null);
@@ -25,11 +27,15 @@ const UsersListToolbar = () => {
       <button
         type="button"
         className="btn btn-primary"
-        onClick={openAddUserModal}>
+        onClick={() => setShowCreateAppModal(true)}>
         <KTIcon iconName="plus" className="fs-2" />
         Proje Ekle
       </button>
       {/* end::Add user */}
+      <CreateAppModal
+        show={showCreateAppModal}
+        handleClose={() => setShowCreateAppModal(false)}
+      />
     </div>
   );
 };

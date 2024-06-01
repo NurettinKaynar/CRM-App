@@ -21,47 +21,42 @@ const AuthLayout = () => {
       <div
         className="d-flex flex-lg-row-fluid w-lg-50 bgi-size-cover bgi-position-center order-2 order-lg-1"
         style={{
-          backgroundImage: `url(${toAbsoluteUrl("media/misc/auth-bg.png")})`,
+          backgroundImage: `url(${toAbsoluteUrl("media/images/bg01.jpg")})`,
         }}>
         {/* begin::Content */}
-        <div className="d-flex flex-column flex-center py-15 px-5 px-md-15 w-100">
+        <div
+          style={{ background: "rgba(0,0,0,0.6)" }}
+          className="d-flex flex-column flex-center py-15 px-5 px-md-15 w-100">
           {/* begin::Logo */}
           <Link to="/" className="mb-12">
             <img
               alt="Logo"
-              src={toAbsoluteUrl("media/logos/custom-1.png")}
+              src={toAbsoluteUrl("media/logos/logo.jpg")}
               className="h-75px"
             />
           </Link>
           {/* end::Logo */}
 
           {/* begin::Image */}
-          <img
+          {/* <img
             className="mx-auto w-275px w-md-50 w-xl-500px mb-10 mb-lg-20"
             src={toAbsoluteUrl("media/misc/auth-screens.png")}
             alt=""
-          />
+          /> */}
           {/* end::Image */}
 
           {/* begin::Title */}
           <h1 className="text-white fs-2qx fw-bolder text-center mb-7">
-            Fast, Efficient and Productive
+            ELATUKKU CRM
           </h1>
           {/* end::Title */}
 
           {/* begin::Text */}
           <div className="text-white fs-base text-center">
-            In this kind of post,{" "}
-            <a href="#" className="opacity-75-hover text-warning fw-bold me-1">
-              the blogger
-            </a>
-            introduces a person they’ve interviewed <br /> and provides some
-            background information about
-            <a href="#" className="opacity-75-hover text-warning fw-bold me-1">
-              the interviewee
-            </a>
-            and their <br /> work following this is a transcript of the
-            interview.
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nam, qui.
+            Provident exercitationem cumque aperiam voluptate. Molestias,
+            consequuntur? Veritatis optio pariatur laboriosam rem, cum, odio
+            voluptatibus libero, necessitatibus et repudiandae similique!
           </div>
           {/* end::Text */}
         </div>

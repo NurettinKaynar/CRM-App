@@ -1,14 +1,15 @@
 import axios, { AxiosResponse } from "axios";
 import { ID, Response } from "../../../../../../_metronic/helpers";
 import { User, UsersQueryResponse } from "./_models";
+import { ApiUrls } from "../../../../../utilities/ApiService";
 
 const API_URL = import.meta.env.VITE_APP_THEME_API_URL;
 const USER_URL = `${API_URL}/user`;
 const GET_USERS_URL = `${API_URL}/users/query`;
 
-const getUsers = (query: string): Promise<UsersQueryResponse> => {
+const getTaskList = (query: object): Promise<any> => {
   return axios
-    .get(`${GET_USERS_URL}?${query}`)
+    .get(`${ApiUrls.BASE_URL}${ApiUrls.GET_TASK_LIST}`, { params: query })
     .then((d: AxiosResponse<UsersQueryResponse>) => d.data);
 };
 
@@ -43,7 +44,7 @@ const deleteSelectedUsers = (userIds: Array<ID>): Promise<void> => {
 };
 
 export {
-  getUsers,
+  getTaskList,
   deleteUser,
   deleteSelectedUsers,
   getUserById,

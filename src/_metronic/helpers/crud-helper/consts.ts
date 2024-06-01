@@ -1,5 +1,5 @@
 const QUERIES = {
-  USERS_LIST: 'users-list',
-}
+  TASK_LIST: "GetAppTasks",
+};
 
-export {QUERIES}
+export { QUERIES };

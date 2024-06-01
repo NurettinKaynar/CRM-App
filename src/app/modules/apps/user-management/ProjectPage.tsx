@@ -1,6 +1,6 @@
 import { Route, Routes, Outlet, Navigate } from "react-router-dom";
 import { PageLink, PageTitle } from "../../../../_metronic/layout/core";
-import { ProjectListWrapper } from "./project-list/UsersList";
+import { ProjectListWrapper } from "./project-list/ProjectList";
 
 const usersBreadcrumbs: Array<PageLink> = [
   {

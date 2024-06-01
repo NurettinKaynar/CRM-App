@@ -11,7 +11,7 @@ import {
   stringifyRequestQuery,
   WithChildren,
 } from "../../../../../../_metronic/helpers";
-import { getUsers } from "./_requests";
+import { getTaskList } from "./_requests";
 import { User } from "./_models";
 import { useQueryRequest } from "./QueryRequestProvider";
 
@@ -32,9 +32,9 @@ const QueryResponseProvider: FC<WithChildren> = ({ children }) => {
     refetch,
     data: response,
   } = useQuery(
-    `${QUERIES.USERS_LIST}-${query}`,
+    query,
     () => {
-      return getUsers(query);
+      return getTaskList({ query });
     },
     { cacheTime: 0, keepPreviousData: true, refetchOnWindowFocus: false }
   );

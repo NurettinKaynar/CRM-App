@@ -27,7 +27,11 @@ const ProjectListWrapper = () => (
       <ListViewProvider>
         {/* <ToolbarWrapper /> */}
         <Content>
-          <ProjectList />
+          <div className="app-content">
+            <div className="app-container container-xxl">
+              <ProjectList />
+            </div>
+          </div>
         </Content>
       </ListViewProvider>
     </QueryResponseProvider>

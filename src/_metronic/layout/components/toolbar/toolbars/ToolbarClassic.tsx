@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useState } from "react";
 import { KTIcon } from "../../../../helpers";
-import { CreateAppModal, Dropdown1 } from "../../../../partials";
+import { Dropdown1 } from "../../../../partials";
 import { useLayout } from "../../../core";
 
 const ToolbarClassic = () => {
@@ -57,10 +57,10 @@ const ToolbarClassic = () => {
           Oluştur
         </a>
       )}
-      <CreateAppModal
+      {/* <CreateAppModal
         show={showCreateAppModal}
         handleClose={() => setShowCreateAppModal(false)}
-      />
+      /> */}
     </div>
   );
 };

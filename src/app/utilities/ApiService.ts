@@ -3,4 +3,9 @@ export class ApiUrls {
   public static readonly LOGIN = "Admin/LogIn";
   public static readonly REGISTER = "Admin/SignUp";
   public static readonly GET_TASK_LIST = "AppTask/GetAppTasks";
+  public static readonly GET_PROJECT_LIST = "AppProject/GetAppProjects";
+
+  public static readonly CREATE_PROJECT = "AppProject/CreateAsy";
+  public static readonly UPDATE_PROJECT = "AppProject/UpdateAsy";
+  public static readonly DELETE_PROJECT = "AppProject/DeleteAsy";
 }

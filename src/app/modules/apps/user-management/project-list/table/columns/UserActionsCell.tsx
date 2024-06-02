@@ -4,7 +4,6 @@ import { MenuComponent } from "../../../../../../../_metronic/assets/ts/componen
 import { ID, KTIcon, QUERIES } from "../../../../../../../_metronic/helpers";
 import { useListView } from "../../core/ListViewProvider";
 import { useQueryResponse } from "../../core/QueryResponseProvider";
-import { deleteUser } from "../../core/_requests";
 
 type Props = {
   id: ID;
@@ -22,14 +21,6 @@ const UserActionsCell: FC<Props> = ({ id }) => {
   const openEditModal = () => {
     setItemIdForUpdate(id);
   };
-
-  const deleteItem = useMutation(() => deleteUser(id), {
-    // 💡 response of the mutation is passed to onSuccess
-    onSuccess: () => {
-      // ✅ update detail view directly
-      // queryClient.invalidateQueries([`${QUERIES.USERS_LIST}-${query}`])
-    },
-  });
 
   return (
     <>
@@ -55,10 +46,7 @@ const UserActionsCell: FC<Props> = ({ id }) => {
 
         {/* begin::Menu item */}
         <div className="menu-item px-3">
-          <a
-            className="menu-link px-3"
-            data-kt-users-table-filter="delete_row"
-            onClick={async () => await deleteItem.mutateAsync()}>
+          <a className="menu-link px-3" data-kt-users-table-filter="delete_row">
             Delete
           </a>
         </div>

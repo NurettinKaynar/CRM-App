@@ -1,12 +1,10 @@
-import { lazy, FC, Suspense } from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
-import { MasterLayout } from "../../_metronic/layout/MasterLayout";
+import { FC, Suspense, lazy } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import TopBarProgress from "react-topbar-progress-indicator";
-import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
-import { MenuTestPage } from "../pages/MenuTestPage";
 import { getCSSVariableValue } from "../../_metronic/assets/ts/_utils";
 import { WithChildren } from "../../_metronic/helpers";
-import BuilderPageWrapper from "../pages/layout-builder/BuilderPageWrapper";
+import { MasterLayout } from "../../_metronic/layout/MasterLayout";
+import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -15,7 +13,7 @@ const PrivateRoutes = () => {
   const WidgetsPage = lazy(() => import("../modules/widgets/WidgetsPage"));
   const ChatPage = lazy(() => import("../modules/apps/chat/ChatPage"));
   const ProjectManagement = lazy(
-    () => import("../modules/apps/user-management/ProjectPage")
+    () => import("../project-management/ProjectWrapper")
   );
 
   return (

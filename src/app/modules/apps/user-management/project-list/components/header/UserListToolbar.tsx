@@ -1,8 +1,7 @@
 import { KTIcon } from "../../../../../../../_metronic/helpers";
-import { CreateAppModal } from "../../../../../../../_metronic/partials";
+import CreateAppModal from "../modals/CreateEditModals/CreateAppModal";
 import { useListView } from "../../core/ListViewProvider";
-import { UsersListFilter } from "./UsersListFilter";
-import React, { useState } from "react";
+import { useState } from "react";
 const UsersListToolbar = () => {
   const [showCreateAppModal, setShowCreateAppModal] = useState<boolean>(false);
   const { setItemIdForUpdate } = useListView();

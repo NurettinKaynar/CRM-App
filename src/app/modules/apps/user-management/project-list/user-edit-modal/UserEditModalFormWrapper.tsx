@@ -2,7 +2,6 @@ import { useQuery } from "react-query";
 import { UserEditModalForm } from "./UserEditModalForm";
 import { isNotEmpty, QUERIES } from "../../../../../../_metronic/helpers";
 import { useListView } from "../core/ListViewProvider";
-import { getUserById } from "../core/_requests";
 
 const UserEditModalFormWrapper = () => {
   const { itemIdForUpdate, setItemIdForUpdate } = useListView();
@@ -11,20 +10,14 @@ const UserEditModalFormWrapper = () => {
     isLoading,
     data: user,
     error,
-  } = useQuery(
-    `${QUERIES.TASK_LIST}-user-${itemIdForUpdate}`,
-    () => {
-      return getUserById(itemIdForUpdate);
+  } = useQuery(`${QUERIES.TASK_LIST}-user-${itemIdForUpdate}`, () => {}, {
+    cacheTime: 0,
+    enabled: enabledQuery,
+    onError: (err) => {
+      setItemIdForUpdate(undefined);
+      console.error(err);
     },
-    {
-      cacheTime: 0,
-      enabled: enabledQuery,
-      onError: (err) => {
-        setItemIdForUpdate(undefined);
-        console.error(err);
-      },
-    }
-  );
+  });
 
   if (!itemIdForUpdate) {
     return (

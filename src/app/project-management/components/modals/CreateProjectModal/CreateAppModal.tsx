@@ -1,7 +1,7 @@
 import { AxiosError, AxiosResponse } from "axios";
 import clsx from "clsx";
 import { Turkish } from "flatpickr/dist/l10n/tr";
-import { useFormik } from "formik";
+import { FormikErrors, useFormik } from "formik";
 import { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import Flatpickr from "react-flatpickr";
@@ -32,7 +32,7 @@ const CreateAppModal = ({
   project,
 }: CreateAppModalProps) => {
   const [initVal] = useState<any>({
-    title: state === "Create" ? "" : project ? project.tite : null,
+    title: state === "Create" ? "" : project ? project.title : "",
     description: state === "Create" ? "" : project.description,
     detail: state === "Create" ? "" : project.detail,
     startingDate: state === "Create" ? "" : new Date(project.startingDate),
@@ -55,7 +55,7 @@ const CreateAppModal = ({
 
   const handleCreateObject = (formValues: any) => {
     const request = {
-      tite: formValues.title,
+      title: formValues.title,
       description: formValues.description,
       detail: formValues.detail,
       startingDate: formValues.startingDate,
@@ -68,6 +68,7 @@ const CreateAppModal = ({
         handleClose(true);
       })
       .catch((err: AxiosError) => {
+        setLoading(false);
         toast.error("Proje Eklenemedi");
         console.error("Proje Eklenme Sorunu", err);
       });
@@ -76,7 +77,7 @@ const CreateAppModal = ({
   const handleEditProject = (formValues: any) => {
     const request = {
       id: project.id,
-      tite: formValues.title,
+      title: formValues.title,
       description: formValues.description,
       detail: formValues.detail,
       startingDate: formValues.startingDate,
@@ -90,9 +91,24 @@ const CreateAppModal = ({
         handleClose(true);
       })
       .catch((err: AxiosError) => {
+        setLoading(false);
         toast.error("Proje Güncellenemedi");
-        console.error("Proje Eklenme Sorunu", err);
+        console.error("Proje Güncellenme Sorunu", err);
       });
+  };
+
+  const renderError = (
+    error:
+      | string
+      | string[]
+      | FormikErrors<any>
+      | FormikErrors<any>[]
+      | undefined
+  ) => {
+    if (typeof error === "string") {
+      return <span role="alert">{error}</span>;
+    }
+    return null;
   };
 
   return (
@@ -120,7 +136,7 @@ const CreateAppModal = ({
             {formik.touched.title && formik.errors.title && (
               <div className="fv-plugins-message-container">
                 <div className="fv-help-block">
-                  <span role="alert">{formik.errors.name}</span>
+                  {renderError(formik.errors.title)}
                 </div>
               </div>
             )}
@@ -146,7 +162,7 @@ const CreateAppModal = ({
             {formik.touched.description && formik.errors.description && (
               <div className="fv-plugins-message-container">
                 <div className="fv-help-block">
-                  <span role="alert">{formik.errors.description}</span>
+                  {renderError(formik.errors.description)}
                 </div>
               </div>
             )}
@@ -170,7 +186,7 @@ const CreateAppModal = ({
             {formik.touched.detail && formik.errors.detail && (
               <div className="fv-plugins-message-container">
                 <div className="fv-help-block">
-                  <span role="alert">{formik.errors.detail}</span>
+                  {renderError(formik.errors.detail)}
                 </div>
               </div>
             )}
@@ -212,7 +228,7 @@ const CreateAppModal = ({
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="secondary" onClick={() => handleClose(false)}>
           Vazgeç
         </Button>
         <Button variant="primary" onClick={formik.submitForm}>

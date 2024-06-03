@@ -2,7 +2,7 @@ import { AxiosError, AxiosResponse } from "axios";
 import clsx from "clsx";
 import { Turkish } from "flatpickr/dist/l10n/tr";
 import { FormikErrors, useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import Flatpickr from "react-flatpickr";
 import * as Yup from "yup";
@@ -25,26 +25,50 @@ const validate = Yup.object().shape({
   endDate: Yup.string().required("Zorunlu Alan"),
 });
 
-const CreateAppModal = ({
-  show,
-  handleClose,
-  state,
-  project,
-}: CreateAppModalProps) => {
-  const [initVal] = useState<any>({
-    title: state === "Create" ? "" : project ? project.title : "",
-    description: state === "Create" ? "" : project.description,
-    detail: state === "Create" ? "" : project.detail,
-    startingDate: state === "Create" ? "" : new Date(project.startingDate),
-    endDate: state === "Create" ? "" : new Date(project.endDate),
+let initValues={
+  title:"",
+  description:"",
+  detail:"",
+  startingDate:"",
+  endDate:"",
+}
+
+const CreateAppModal = ({ show, handleClose, state, project }: CreateAppModalProps) => {
+
+
+  const [initialValues, setInitialValues] = useState({
+    title: "",
+    description: "",
+    detail: "",
+    startingDate: "",
+    endDate: "",
   });
-  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (state === "Edit" && project) {
+      setInitialValues({
+        title: project.tite || "",
+        description: project.description || "",
+        startingDate: project.startingDate || "",
+        endDate: project.endDate || "",
+        detail: project.detail || "",
+      });
+    } else {
+      setInitialValues({
+        title: "",
+        description: "",
+        startingDate: "",
+        endDate: "",
+        detail: "",
+      });
+    }
+  }, [state, project, show]);
+
   const formik = useFormik({
-    initialValues: initVal,
+    initialValues,
     enableReinitialize: true,
     validationSchema: validate,
     onSubmit: async (values, { setStatus, setSubmitting }) => {
-      setLoading(true);
       if (state === "Create") {
         handleCreateObject(values);
       } else {
@@ -52,10 +76,10 @@ const CreateAppModal = ({
       }
     },
   });
-
+  
   const handleCreateObject = (formValues: any) => {
     const request = {
-      title: formValues.title,
+      tite: formValues.title,
       description: formValues.description,
       detail: formValues.detail,
       startingDate: formValues.startingDate,
@@ -63,12 +87,12 @@ const CreateAppModal = ({
     };
     createProject(request)
       .then((res: AxiosResponse<any>) => {
-        setLoading(false);
+      
         toast.success("Proje Başarıyla Eklendi");
         handleClose(true);
       })
       .catch((err: AxiosError) => {
-        setLoading(false);
+      
         toast.error("Proje Eklenemedi");
         console.error("Proje Eklenme Sorunu", err);
       });
@@ -77,7 +101,7 @@ const CreateAppModal = ({
   const handleEditProject = (formValues: any) => {
     const request = {
       id: project.id,
-      title: formValues.title,
+      tite: formValues.title,
       description: formValues.description,
       detail: formValues.detail,
       startingDate: formValues.startingDate,
@@ -86,16 +110,18 @@ const CreateAppModal = ({
 
     editProject(request)
       .then((res: AxiosResponse<any>) => {
-        setLoading(false);
+      
         toast.success("Proje Başarıyla Güncellendi");
         handleClose(true);
       })
       .catch((err: AxiosError) => {
-        setLoading(false);
+
         toast.error("Proje Güncellenemedi");
         console.error("Proje Güncellenme Sorunu", err);
       });
   };
+
+
 
   const renderError = (
     error:

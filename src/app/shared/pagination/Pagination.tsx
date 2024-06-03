@@ -16,14 +16,14 @@ const CustomPagination = ({
   let startPage, endPage;
 
   if (total <= maxPagesToShow) {
-    startPage = 0;
+    startPage = 1;
     endPage = total - 1;
   } else {
     const maxPagesBeforeCurrentPage = Math.floor(maxPagesToShow / 2);
     const maxPagesAfterCurrentPage = Math.ceil(maxPagesToShow / 2) - 1;
 
     if (current <= maxPagesBeforeCurrentPage) {
-      startPage = 0;
+      startPage = 1;
       endPage = maxPagesToShow - 1;
     } else if (current + maxPagesAfterCurrentPage >= total) {
       startPage = total - maxPagesToShow;
@@ -46,8 +46,8 @@ const CustomPagination = ({
       <Pagination.Item
         key={page}
         active={page === current}
-        onClick={() => onChangePage(page)}>
-        {page + 1}
+        onClick={()=>onChangePage(page)}>
+        {page }
       </Pagination.Item>
     );
   }

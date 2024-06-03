@@ -1,6 +1,6 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { Routes, Route, Outlet, Navigate } from "react-router-dom";
-import { PageLink, PageTitle } from "../../_metronic/layout/core";
+import { LayoutSplashScreen, PageLink, PageTitle } from "../../_metronic/layout/core";
 import { ProjectListWrapper } from "../modules/apps/user-management/project-list/ProjectList";
 import ProjectList from "./pages/ProjectList";
 import { Content } from "../../_metronic/layout/components/content";
@@ -22,7 +22,9 @@ const usersBreadcrumbs: Array<PageLink> = [
 
 const ProjectWrapper = () => {
   return (
+    <Suspense fallback={<LayoutSplashScreen/>}>
     <Routes>
+
       <Route element={<Outlet />}>
         <Route
           path="projects"
@@ -44,6 +46,7 @@ const ProjectWrapper = () => {
       </Route>
       <Route index element={<Navigate to="/project-operation/projects" />} />
     </Routes>
+    </Suspense>
   );
 };
 

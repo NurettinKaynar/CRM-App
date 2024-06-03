@@ -7,7 +7,7 @@ import { getProjectList, deleteProject } from "../core/_request";
 import { AxiosError, AxiosResponse } from "axios";
 import ActionButtons from "../../shared/ActionsButtons/ActionButtons";
 import { toast } from "react-toastify";
-
+import moment from "moment";
 const ProjectList = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,9 +16,10 @@ const ProjectList = () => {
   const [projects, setProjects] = useState<any[]>([]);
   const [showCreateAppModal, setShowCreateAppModal] = useState<boolean>(false);
 
+  
   const handleChangePage = (e: number) => {
     setCurrentPage(e);
-    getProjectData({ currentPage, searchTerm });
+    getProjectData( e, searchTerm );
     console.log("Sayfa Değiştirildi", e);
   };
 
@@ -26,21 +27,15 @@ const ProjectList = () => {
     console.log("e data", e.target.value);
 
     setSearchTerm(e.target.value);
-    getProjectData({ currentPage, searchTerm });
+    getProjectData( currentPage, searchTerm );
   };
 
   const handleCreateProject = () => {
     setShowCreateAppModal(false);
-    getProjectData({ currentPage, searchTerm });
+    getProjectData( currentPage, searchTerm );
   };
 
-  const getProjectData = ({
-    currentPage,
-    searchTerm,
-  }: {
-    currentPage: number;
-    searchTerm: string;
-  }) => {
+  const getProjectData = (currentPage:number,searchTerm:string,) => {
     const queryData = {
       page: currentPage,
       quantity: 15,
@@ -49,7 +44,7 @@ const ProjectList = () => {
     getProjectList(queryData)
       .then((res: AxiosResponse) => {
         console.log("res.data", res.data);
-        setProjects(res.data.lists);
+        setProjects(res.data.list);
       })
       .catch((err: AxiosError) => {
         console.error("Data Getirilemedi", err);
@@ -68,10 +63,10 @@ const ProjectList = () => {
     deleteProject(project.id)
       .then((res: AxiosResponse) => {
         toast.success("Proje Başarıyla Silindi");
-        getProjectData({ currentPage, searchTerm });
+        getProjectData( currentPage, searchTerm );
       })
-      .catch((err: AxiosError) => {
-        toast.success("Proje Silinemedi");
+      .catch((err: AxiosError<any>) => {
+        toast.error("Proje Silinemedi");
       });
   };
   const handleCreateProjectOpenModal = () => {
@@ -80,7 +75,7 @@ const ProjectList = () => {
   };
 
   useEffect(() => {
-    getProjectData({ currentPage, searchTerm });
+    getProjectData( currentPage, searchTerm );
   }, []);
   return (
     <KTCard>
@@ -137,8 +132,8 @@ const ProjectList = () => {
                   <tr key={index}>
                     <td>{project.tite}</td>
                     <td>{project.description}</td>
-                    <td>{project.startingDate}</td>
-                    <td>{project.endDate}</td>
+                    <td>{moment(project.startingDate).format('DD/MM/YYYY')}</td>
+                    <td>{moment(project.endDate).format('DD/MM/YYYY')}</td>
                     <td>
                       <ActionButtons
                         onClickEdit={() => handleEditProject(project)}
@@ -157,9 +152,9 @@ const ProjectList = () => {
             </tbody>
           </Table>
         </div>
-        {projects.length > 0 ? (
+        {projects.length >=15 ? (
           <CustomPagination
-            total={20}
+            total={projects.length}
             current={currentPage}
             onChangePage={handleChangePage}
           />

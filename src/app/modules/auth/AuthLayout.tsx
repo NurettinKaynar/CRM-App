@@ -31,8 +31,8 @@ const AuthLayout = () => {
           <Link to="/" className="mb-12">
             <img
               alt="Logo"
-              src={toAbsoluteUrl("media/logos/logo.jpg")}
-              className="h-75px"
+              src={toAbsoluteUrl("media/logos/logo.svg")}
+              width={300}
             />
           </Link>
           {/* end::Logo */}

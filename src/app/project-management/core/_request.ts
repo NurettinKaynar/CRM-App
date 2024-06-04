@@ -20,4 +20,19 @@ const deleteProject = (id: number): Promise<any> => {
   });
 };
 
-export { createProject, getProjectList, editProject, deleteProject };
+const getAdminsData = (): Promise<any> => {
+  return axios.get(`${API_URL}${ApiUrls.GET_ADMIN_LIST}`);
+};
+
+const getEmployeeList = (): Promise<any> => {
+  return axios.get(`${API_URL}${ApiUrls.GET_EMPLOYEE_LIST}`);
+};
+
+export {
+  createProject,
+  getProjectList,
+  editProject,
+  deleteProject,
+  getAdminsData,
+  getEmployeeList,
+};

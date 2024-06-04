@@ -8,4 +8,6 @@ export class ApiUrls {
   public static readonly CREATE_PROJECT = "AppProject/CreateAsy";
   public static readonly UPDATE_PROJECT = "AppProject/UpdateAsy";
   public static readonly DELETE_PROJECT = "AppProject/DeleteAsy";
+  public static readonly GET_ADMIN_LIST = "Admin/GetAdminList";
+  public static readonly GET_EMPLOYEE_LIST = "Employee/GetEmployeeList";
 }

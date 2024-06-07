@@ -5,6 +5,7 @@ import { getCSSVariableValue } from "../../_metronic/assets/ts/_utils";
 import { WithChildren } from "../../_metronic/helpers";
 import { MasterLayout } from "../../_metronic/layout/MasterLayout";
 import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
+import EmployeeWrapper from "../employee-management/EmployeeWrapper";
 
 const PrivateRoutes = () => {
   const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
@@ -71,6 +72,14 @@ const PrivateRoutes = () => {
           element={
             <SuspensedView>
               <ProjectManagement />
+            </SuspensedView>
+          }
+        />
+        <Route
+          path="employee-operation/*"
+          element={
+            <SuspensedView>
+              <EmployeeWrapper />
             </SuspensedView>
           }
         />

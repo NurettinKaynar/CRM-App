@@ -20,6 +20,12 @@ const SidebarMenuMain = () => {
         title="Projeler"
         fontIcon="bi-layers"
       />
+      <SidebarMenuItem
+        to="/employee-operation/employees"
+        icon="user"
+        title="Personel Listesi"
+        fontIcon="bi-person"
+      />
       {/* <SidebarMenuItem
         to="/builder"
         icon="switch"

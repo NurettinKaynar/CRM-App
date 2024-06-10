@@ -118,17 +118,8 @@ const AddPersonnel = ({
           className="form"
           onSubmit={personnelForm.handleSubmit}
           noValidate>
-          <div
-            className="d-flex flex-column scroll-y me-n7 pe-7"
-            id="kt_modal_add_user_scroll"
-            data-kt-scroll="true"
-            data-kt-scroll-activate="{default: false, lg: true}"
-            data-kt-scroll-max-height="auto"
-            data-kt-scroll-dependencies="#kt_modal_add_user_header"
-            data-kt-scroll-wrappers="#kt_modal_add_user_scroll"
-            data-kt-scroll-offset="300px">
+          <div className="d-flex flex-column scroll-y me-n7 pe-7">
             <div className="fv-row mb-7">
-              <label className="d-block fw-bold fs-6 mb-5">Profil</label>
               <Form.Group className="fv-row mb-7">
                 <Form.Label>Personel Adı</Form.Label>
                 <Form.Control

@@ -8,6 +8,7 @@ import {
 } from "../../_metronic/layout/core";
 
 import { Content } from "../../_metronic/layout/components/content";
+import { ToolbarWrapper } from "../../_metronic/layout/components/toolbar";
 
 const EmployeeWrapper = () => {
   const usersBreadcrumbs: Array<PageLink> = [
@@ -25,33 +26,29 @@ const EmployeeWrapper = () => {
     },
   ];
   return (
-    <Suspense fallback={<LayoutSplashScreen />}>
-      <Routes>
-        <Route element={<Outlet />}>
-          <Route
-            path="employees"
-            element={
-              <>
-                <PageTitle breadcrumbs={usersBreadcrumbs}>
-                  Çalışan Listesi
-                </PageTitle>
-                <Content>
-                  <div className="app-content ">
-                    <div className="app-container container-xxl">
-                      <EmployeeList />
-                    </div>
-                  </div>
-                </Content>
-              </>
-            }
-          />
-        </Route>
+    <Routes>
+      <Route element={<Outlet />}>
         <Route
-          index
-          element={<Navigate to="/employee-operation/employees" />}
+          path="employees"
+          element={
+            <>
+              <PageTitle breadcrumbs={usersBreadcrumbs}>
+                Çalışan Listesi
+              </PageTitle>
+              <Content>
+                <div className="app-content ">
+                  <div className="app-container container-xxl">
+                    <ToolbarWrapper />
+                    <EmployeeList />
+                  </div>
+                </div>
+              </Content>
+            </>
+          }
         />
-      </Routes>
-    </Suspense>
+      </Route>
+      <Route index element={<Navigate to="/employee-operation/employees" />} />
+    </Routes>
   );
 };
 

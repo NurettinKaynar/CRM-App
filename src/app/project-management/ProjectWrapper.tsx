@@ -31,51 +31,49 @@ const usersBreadcrumbs: Array<PageLink> = [
 
 const ProjectWrapper = () => {
   return (
-    <Suspense>
-      <Routes>
-        <Route element={<Outlet />}>
-          <Route
-            path="projects"
-            element={
-              <>
-                <PageTitle breadcrumbs={usersBreadcrumbs}>
-                  Proje Listesi
-                </PageTitle>
-                <Content>
-                  <div className="app-content ">
-                    <div className="app-container container-xxl">
-                      <ToolbarWrapper />
-                      <ProjectHeader />
-                      <ProjectList />
-                    </div>
+    <Routes>
+      <Route element={<Outlet />}>
+        <Route
+          path="projects"
+          element={
+            <>
+              <PageTitle breadcrumbs={usersBreadcrumbs}>
+                Proje Listesi
+              </PageTitle>
+              <Content>
+                <div className="app-content ">
+                  <div className="app-container container-xxl">
+                    <ToolbarWrapper />
+                    <ProjectHeader />
+                    <ProjectList />
                   </div>
-                </Content>
-              </>
-            }
-          />
-          <Route
-            path="calendar"
-            element={
-              <>
-                <PageTitle breadcrumbs={usersBreadcrumbs}>
-                  Proje Takvimi
-                </PageTitle>
-                <Content>
-                  <div className="app-content ">
-                    <div className="app-container container-xxl">
-                      <ToolbarWrapper />
-                      <ProjectHeader />
-                      <Events />
-                    </div>
+                </div>
+              </Content>
+            </>
+          }
+        />
+        <Route
+          path="calendar"
+          element={
+            <>
+              <PageTitle breadcrumbs={usersBreadcrumbs}>
+                Proje Takvimi
+              </PageTitle>
+              <Content>
+                <div className="app-content ">
+                  <div className="app-container container-xxl">
+                    <ToolbarWrapper />
+                    <ProjectHeader />
+                    <Events />
                   </div>
-                </Content>
-              </>
-            }
-          />
-        </Route>
-        <Route index element={<Navigate to="/project-operation/projects" />} />
-      </Routes>
-    </Suspense>
+                </div>
+              </Content>
+            </>
+          }
+        />
+      </Route>
+      <Route index element={<Navigate to="/project-operation/projects" />} />
+    </Routes>
   );
 };
 

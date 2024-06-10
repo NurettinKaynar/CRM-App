@@ -1,41 +1,47 @@
 import React, { useState, useEffect } from "react";
-import { KTCard, KTIcon } from "../../../_metronic/helpers";
-import CreateAppModal from "../components/modals/CreateProjectModal/CreateAppModal";
-import CustomPagination from "../../shared/pagination/Pagination";
+import { KTCard, KTIcon } from "../../../../_metronic/helpers";
+import CreateAppModal from "../../components/modals/CreateProjectModal/CreateAppModal";
+import CustomPagination from "../../../shared/pagination/Pagination";
 import { Table } from "react-bootstrap";
-import { getProjectList, deleteProject } from "../core/_request";
+import { getProjectList, deleteProject } from "../../core/_request";
 import { AxiosError, AxiosResponse } from "axios";
-import ActionButtons from "../../shared/ActionsButtons/ActionButtons";
+import ActionButtons from "../../../shared/ActionsButtons/ActionButtons";
 import { toast } from "react-toastify";
 import moment from "moment";
+import AppInfoModal from "../../components/modals/AppInfoModal/AppInfoModal";
 const ProjectList = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [editProject, setEditProject] = useState();
+  const [editProjectId, setEditProjectId] = useState<number>(0);
   const [state, setState] = useState<"Create" | "Edit">("Create");
   const [projects, setProjects] = useState<any[]>([]);
+  const [handleOpenDetailsModal, setHandleOpenDetailsModal] =
+    useState<boolean>(false);
   const [showCreateAppModal, setShowCreateAppModal] = useState<boolean>(false);
 
-  
   const handleChangePage = (e: number) => {
     setCurrentPage(e);
-    getProjectData( e, searchTerm );
-    console.log("Sayfa Değiştirildi", e);
+    getProjectData(e, searchTerm);
+  };
+  const handleOpenInfoModal = (projectId: number) => {
+    setEditProjectId(projectId);
+    setHandleOpenDetailsModal(true);
+  };
+  const handleCloseInfoModal = () => {
+    setHandleOpenDetailsModal(false);
   };
 
   const handleSearchValue = (e: any) => {
-    console.log("e data", e.target.value);
-
     setSearchTerm(e.target.value);
-    getProjectData( currentPage, searchTerm );
+    getProjectData(currentPage, searchTerm);
   };
 
   const handleCreateProject = () => {
     setShowCreateAppModal(false);
-    getProjectData( currentPage, searchTerm );
+    getProjectData(currentPage, searchTerm);
   };
 
-  const getProjectData = (currentPage:number,searchTerm:string,) => {
+  const getProjectData = (currentPage: number, searchTerm: string) => {
     const queryData = {
       page: currentPage,
       quantity: 15,
@@ -52,8 +58,8 @@ const ProjectList = () => {
       });
   };
 
-  const handleEditProject = (project: any) => {
-    setEditProject(project);
+  const handleEditProject = (projectId: number) => {
+    setEditProjectId(projectId);
     setState("Edit");
     setShowCreateAppModal(true);
   };
@@ -63,7 +69,7 @@ const ProjectList = () => {
     deleteProject(project.id)
       .then((res: AxiosResponse) => {
         toast.success("Proje Başarıyla Silindi");
-        getProjectData( currentPage, searchTerm );
+        getProjectData(currentPage, searchTerm);
       })
       .catch((err: AxiosError<any>) => {
         toast.error("Proje Silinemedi");
@@ -75,7 +81,7 @@ const ProjectList = () => {
   };
 
   useEffect(() => {
-    getProjectData( currentPage, searchTerm );
+    getProjectData(currentPage, searchTerm);
   }, []);
   return (
     <KTCard>
@@ -132,13 +138,20 @@ const ProjectList = () => {
                   <tr key={index}>
                     <td>{project.tite}</td>
                     <td>{project.description}</td>
-                    <td>{moment(project.startingDate).format('DD/MM/YYYY')}</td>
-                    <td>{moment(project.endDate).format('DD/MM/YYYY')}</td>
-                    <td>
+                    <td>{moment(project.startingDate).format("DD/MM/YYYY")}</td>
+                    <td>{moment(project.endDate).format("DD/MM/YYYY")}</td>
+                    <td className="d-flex align-items-center gap-2">
                       <ActionButtons
-                        onClickEdit={() => handleEditProject(project)}
+                        onClickEdit={() => handleEditProject(project.id)}
                         onClickDelete={() => deleteProjectOnList(project)}
                       />
+                      <button
+                        onClick={() => handleOpenInfoModal(project.id)}
+                        type="button"
+                        className="btn btn-active-light-primary btn-sm">
+                        <KTIcon iconName="note-2" className="fs-2" />
+                        Detaylar
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -152,7 +165,7 @@ const ProjectList = () => {
             </tbody>
           </Table>
         </div>
-        {projects.length >=15 ? (
+        {projects.length >= 15 ? (
           <CustomPagination
             total={projects.length}
             current={currentPage}
@@ -161,9 +174,14 @@ const ProjectList = () => {
         ) : null}
         <CreateAppModal
           state={state}
-          project={editProject}
+          projectId={editProjectId}
           show={showCreateAppModal}
           handleClose={() => handleCreateProject()}
+        />
+        <AppInfoModal
+          show={handleOpenDetailsModal}
+          projectId={editProjectId}
+          handleClose={handleCloseInfoModal}
         />
       </div>
     </KTCard>

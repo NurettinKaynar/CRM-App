@@ -14,12 +14,22 @@ const SidebarMenuMain = () => {
         title="Ana Sayfa"
         fontIcon="bi-app-indicator"
       />
-      <SidebarMenuItem
+      <SidebarMenuItemWithSub
         to="/project-operation/projects"
-        icon="switch"
-        title="Projeler"
-        fontIcon="bi-layers"
-      />
+        title="Proje Listesi"
+        fontIcon="bi-app-indicator">
+        <SidebarMenuItem
+          to="/project-operation/projects"
+          title="Proje Listesi"
+          hasBullet={true}
+        />
+        <SidebarMenuItem
+          to="/project-operation/calendar"
+          title="Proje Takvimi"
+          hasBullet={true}
+        />
+      </SidebarMenuItemWithSub>
+
       <SidebarMenuItem
         to="/employee-operation/employees"
         icon="user"

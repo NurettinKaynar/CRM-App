@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { Form, Modal } from "react-bootstrap";
-import { KTIcon, toAbsoluteUrl } from "../../../../_metronic/helpers";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import clsx from "clsx";
-import { createPersonnel, editPersonnel } from "../../core/_requests";
 import { AxiosResponse } from "axios";
+import clsx from "clsx";
+import { useFormik } from "formik";
+import { useEffect, useState } from "react";
+import { Form, Modal } from "react-bootstrap";
+import * as Yup from "yup";
+import { KTIcon } from "../../../../_metronic/helpers";
+import { createPersonnel, editPersonnel } from "../../core/_requests";
 interface PersonnelModalProps {
   show: boolean;
   handleClose: (e: boolean) => void;
@@ -21,13 +21,6 @@ const personnelFormValidateScheme = Yup.object().shape({
     .required("E-posta zorunlu"),
   password: Yup.string(),
 });
-
-const initialValues = {
-  name: "",
-  surname: "",
-  email: "",
-  password: "",
-};
 
 const AddPersonnel = ({
   show,
@@ -48,17 +41,10 @@ const AddPersonnel = ({
     email: "",
     password: "",
   });
-  const blankImg = toAbsoluteUrl("media/svg/avatars/blank.svg");
-  const userAvatarImg =
-    state === "Edit" &&
-    personnel.images &&
-    personnel.images[0] &&
-    personnel.images[0].path
-      ? toAbsoluteUrl(`media/${personnel.images[0].path}`)
-      : blankImg;
 
   const personnelForm = useFormik({
     initialValues: initialValues,
+    enableReinitialize: true,
     validationSchema: personnelFormValidateScheme,
     onSubmit: async (values, actions) => {
       if (state === "Create") {
@@ -143,38 +129,6 @@ const AddPersonnel = ({
             data-kt-scroll-offset="300px">
             <div className="fv-row mb-7">
               <label className="d-block fw-bold fs-6 mb-5">Profil</label>
-              <div
-                className="image-input image-input-outline"
-                data-kt-image-input="true"
-                style={{ backgroundImage: `url('${blankImg}')` }}>
-                <div
-                  className="image-input-wrapper w-125px h-125px"
-                  style={{
-                    backgroundImage: `url('${userAvatarImg}')`,
-                  }}></div>
-                <label
-                  className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                  data-kt-image-input-action="change"
-                  data-bs-toggle="tooltip"
-                  title="Profil Değiştir">
-                  <i className="bi bi-pencil-fill fs-7"></i>
-
-                  <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
-                  <input type="hidden" name="avatar_remove" />
-                </label>
-
-                <span
-                  className="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
-                  data-kt-image-input-action="remove"
-                  data-bs-toggle="tooltip"
-                  title="Profili Kaldır">
-                  <i className="bi bi-x fs-2"></i>
-                </span>
-              </div>
-              <div className="form-text">
-                İzin verilen dosya tipleri: png, jpg, jpeg.
-              </div>
-
               <Form.Group className="fv-row mb-7">
                 <Form.Label>Personel Adı</Form.Label>
                 <Form.Control
@@ -289,126 +243,6 @@ const AddPersonnel = ({
                     </div>
                   )}
               </Form.Group>
-              <div className="mb-7">
-                <label className="required fw-bold fs-6 mb-5">Rolü</label>
-
-                <div className="d-flex fv-row">
-                  <div className="form-check form-check-custom form-check-solid">
-                    <input
-                      className="form-check-input me-3"
-                      name="role"
-                      type="radio"
-                      value="Administrator"
-                      id="kt_modal_update_role_option_0"
-                    />
-                    <label
-                      className="form-check-label"
-                      htmlFor="kt_modal_update_role_option_0">
-                      <div className="fw-bolder text-gray-800">Yönetici</div>
-                      <div className="text-gray-600">
-                        İşletme sahipleri ve şirket yöneticileri için en iyisi
-                      </div>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="separator separator-dashed my-5"></div>
-
-                <div className="d-flex fv-row">
-                  <div className="form-check form-check-custom form-check-solid">
-                    <input
-                      className="form-check-input me-3"
-                      name="role"
-                      type="radio"
-                      value="Developer"
-                      id="kt_modal_update_role_option_1"
-                    />
-
-                    <label
-                      className="form-check-label"
-                      htmlFor="kt_modal_update_role_option_1">
-                      <div className="fw-bolder text-gray-800">Geliştirici</div>
-                      <div className="text-gray-600">
-                        Geliştiriciler veya öncelikli olarak API kullanan
-                        kişiler için en iyisi
-                      </div>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="separator separator-dashed my-5"></div>
-
-                <div className="d-flex fv-row">
-                  <div className="form-check form-check-custom form-check-solid">
-                    <input
-                      className="form-check-input me-3"
-                      name="role"
-                      type="radio"
-                      value="Analyst"
-                      id="kt_modal_update_role_option_2"
-                    />
-
-                    <label
-                      className="form-check-label"
-                      htmlFor="kt_modal_update_role_option_2">
-                      <div className="fw-bolder text-gray-800">Analist</div>
-                      <div className="text-gray-600">
-                        Analitik verilere tam erişime ihtiyaç duyan kişiler için
-                        en iyisi, ancak iş ayarlarını güncellemenize gerek yok
-                      </div>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="separator separator-dashed my-5"></div>
-
-                <div className="d-flex fv-row">
-                  <div className="form-check form-check-custom form-check-solid">
-                    <input
-                      className="form-check-input me-3"
-                      name="role"
-                      type="radio"
-                      value="Support"
-                      id="kt_modal_update_role_option_3"
-                    />
-
-                    <label
-                      className="form-check-label"
-                      htmlFor="kt_modal_update_role_option_3">
-                      <div className="fw-bolder text-gray-800">Destek</div>
-                      <div className="text-gray-600">
-                        Ödemeleri düzenli olarak iade eden ve yanıt veren
-                        çalışanlar için en iyisi anlaşmazlıklara
-                      </div>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="separator separator-dashed my-5"></div>
-
-                <div className="d-flex fv-row">
-                  <div className="form-check form-check-custom form-check-solid">
-                    <input
-                      className="form-check-input me-3"
-                      name="role"
-                      type="radio"
-                      id="kt_modal_update_role_option_4"
-                      value="Trial"
-                    />
-
-                    <label
-                      className="form-check-label"
-                      htmlFor="kt_modal_update_role_option_4">
-                      <div className="fw-bolder text-gray-800">Deneme</div>
-                      <div className="text-gray-600">
-                        İçerik verilerini önizlemesi gereken ancak bunu yapmayan
-                        kişiler için en iyisi herhangi bir güncelleme yapmanız
-                        gerekiyor
-                      </div>
-                    </label>
-                  </div>
-                </div>
-              </div>
             </div>
 
             <div className="text-center pt-15">

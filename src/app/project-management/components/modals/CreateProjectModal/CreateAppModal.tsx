@@ -14,6 +14,7 @@ import {
   editProject,
   getAdminsData,
   getEmployeeList,
+  getProjectById,
 } from "../../../core/_request";
 
 import StepperComp, { Step } from "../../../../shared/StepperComp/StepperComp";
@@ -24,7 +25,7 @@ interface CreateAppModalProps {
   show: boolean;
   handleClose: (e: boolean) => void;
   state: "Edit" | "Create";
-  project: any;
+  projectId: number;
 }
 
 const validate = Yup.object().shape({
@@ -44,7 +45,7 @@ const CreateAppModal = ({
   show,
   handleClose,
   state,
-  project,
+  projectId,
 }: CreateAppModalProps) => {
   const [initialValues, setInitialValues] = useState({
     title: "",
@@ -91,17 +92,26 @@ const CreateAppModal = ({
     steps.stepData = step;
   }, [activeStep]);
 
-  useEffect(() => {
-    if (state === "Edit" && project) {
+  const handleGetProject = () => {
+    getProjectById(projectId).then((res: AxiosResponse) => {
+      console.log("PROJE DATASI", res.data);
+
+      const reqData = res.data;
       setInitialValues({
-        title: project.tite || "",
-        description: project.description || "",
-        startingDate: project.startingDate || "",
-        endDate: project.endDate || "",
-        detail: project.detail || "",
-        stages: project.stages || "",
-        relateds: project.relateds || [],
+        title: reqData.tite || "",
+        description: reqData.description || "",
+        startingDate: reqData.startingDate || "",
+        endDate: reqData.endDate || "",
+        detail: reqData.detail || "",
+        stages: reqData.stages || "",
+        relateds: reqData.relateds || [],
       });
+    });
+  };
+
+  useEffect(() => {
+    if (state === "Edit") {
+      handleGetProject();
     } else {
       setInitialValues({
         title: "",
@@ -113,7 +123,7 @@ const CreateAppModal = ({
         relateds: [],
       });
     }
-  }, [state, project, show]);
+  }, [state, projectId, show]);
 
   useEffect(() => {
     if (activeStep === 3) {
@@ -280,12 +290,14 @@ const CreateAppModal = ({
 
   const handleEditProject = (formValues: any) => {
     const request = {
-      id: project.id,
+      id: projectId,
       tite: formValues.title,
       description: formValues.description,
       detail: formValues.detail,
       startingDate: formValues.startingDate,
       endDate: formValues.endDate,
+      stages: formValues.stages,
+      relateds: formValues.relateds,
     };
 
     editProject(request)
@@ -583,24 +595,31 @@ const CreateAppModal = ({
                     <div className="row">
                       {formik.values.relateds &&
                         formik.values.relateds.map(
-                          (related: any, idx: number) => (
-                            <div
-                              key={idx}
-                              className="col-12 card d-flex flex-row align-items-center justify-content-between p-3 m-2">
-                              <div className="d-flex flex-column gap-2">
-                                <h3>
-                                  {related.name} - {related.surname}
-                                </h3>
-                              </div>
+                          (related: any, idx: number) =>
+                            related.admin ? (
+                              <div
+                                key={idx}
+                                className="col-12 card d-flex flex-row align-items-center justify-content-between p-3 m-2">
+                                <div className="d-flex flex-column gap-2">
+                                  <h3>
+                                    {state === "Edit" && related.admin
+                                      ? related.admin.name
+                                      : related.name}{" "}
+                                    -{" "}
+                                    {state === "Edit" && related.admin
+                                      ? related.admin.surname
+                                      : related.surname}
+                                  </h3>
+                                </div>
 
-                              <button
-                                onClick={() => handleDeleteAdmin(related)}
-                                type="button"
-                                className="btn btn-sm btn-light-danger ">
-                                <KTIcon iconName="trash" className="fs-3" />
-                              </button>
-                            </div>
-                          )
+                                <button
+                                  onClick={() => handleDeleteAdmin(related)}
+                                  type="button"
+                                  className="btn btn-sm btn-light-danger ">
+                                  <KTIcon iconName="trash" className="fs-3" />
+                                </button>
+                              </div>
+                            ) : null
                         )}
                     </div>
                   </div>
@@ -643,7 +662,13 @@ const CreateAppModal = ({
                                     className="col-12 card d-flex flex-row align-items-center justify-content-between p-3 m-2">
                                     <div className="d-flex flex-column gap-2">
                                       <h3>
-                                        {related.name} - {related.surname}
+                                        {state === "Edit" && related.employee
+                                          ? related.employee.name
+                                          : related.name}{" "}
+                                        -{" "}
+                                        {state === "Edit" && related.employee
+                                          ? related.employee.surname
+                                          : related.surname}
                                       </h3>
                                     </div>
 

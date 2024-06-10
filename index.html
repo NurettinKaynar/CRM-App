@@ -37,6 +37,24 @@
     <!--end::Theme mode setup on page load-->
 
     <div id="root"></div>
+    <!--begin::Loading markup-->
+    <div id="splash-screen" class="splash-screen">
+      <img
+        src="./public/media/logos/logo.svg"
+        class="dark-logo"
+        width="250"
+        alt="ELATUKKU CRM" />
+      <img
+        src="./public/media/logos/logo.svg"
+        class="light-logo"
+        width="250"
+        alt="ELATUKKU CRM" />
+      <div class="loader-wrapper">
+        <span class="loader"></span>
+        <span class="loading-text">Yükleniyor...</span>
+      </div>
+    </div>
+    <!--end::Loading markup-->
 
     <div id="root-modals"></div>
     <script type="module" src="/src/main.tsx"></script>

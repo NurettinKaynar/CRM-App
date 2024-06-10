@@ -13,4 +13,8 @@ export class ApiUrls {
   public static readonly CREATE_PERSONNEL = "Employee/CreateAsy";
   public static readonly DELETE_PERSONNEL = "Employee/DeleteAsy";
   public static readonly EDIT_PERSONNEL = "Employee/EditAsy";
+  public static readonly GET_TOTAL_ACTIVE_PROJECT_LIST =
+    "AppProject/GetTotalActiveAppProjectsCount";
+  public static readonly GET_ALL_PROJECT = "AppProject/GetAllAsy";
+  public static readonly GET_PROJECT_BY_ID = "AppProject/GetAppProjectsDetail";
 }

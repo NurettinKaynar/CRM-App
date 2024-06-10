@@ -8,6 +8,7 @@ import { ThemeModeProvider } from "../_metronic/partials";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
+import LoadingComponent from "./shared/LoadingComponent/LoadingComponent";
 const App = () => {
   return (
     <I18nProvider>

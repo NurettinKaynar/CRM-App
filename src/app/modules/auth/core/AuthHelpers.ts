@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { AxiosResponse } from "axios";
 import { AuthModel } from "./_models";
 
 const AUTH_LOCAL_STORAGE_KEY = "kt-auth-react-v";

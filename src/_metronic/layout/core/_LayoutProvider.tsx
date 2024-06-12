@@ -69,31 +69,31 @@ const LayoutProvider: FC<WithChildren> = ({ children }) => {
     setClasses(LayoutSetup.classes);
     setAttributes(LayoutSetup.attributes);
     setCSSVariables(LayoutSetup.cssVariables);
-    // setTimeout(() => {
-    //   disableSplashScreen();
-    // }, 500);
-    axios.interceptors.request.use(
-      function (config) {
-        enableSplashScreen();
-        return config;
-      },
-      function (error) {
-        disableSplashScreen();
-        return Promise.reject(error);
-      }
-    );
-
-    axios.interceptors.response.use(
-      function (response) {
-        disableSplashScreen();
-        return response;
-      },
-      function (error) {
-        disableSplashScreen();
-        return Promise.reject(error);
-      }
-    );
+    setTimeout(() => {
+      disableSplashScreen();
+    }, 500);
   };
+  axios.interceptors.request.use(
+    function (config) {
+      enableSplashScreen();
+      return config;
+    },
+    function (error) {
+      disableSplashScreen();
+      return Promise.reject(error);
+    }
+  );
+
+  axios.interceptors.response.use(
+    function (response) {
+      disableSplashScreen();
+      return response;
+    },
+    function (error) {
+      disableSplashScreen();
+      return Promise.reject(error);
+    }
+  );
 
   const setToolbarType = (toolbarType: ToolbarType) => {
     const updatedConfig = { ...config };

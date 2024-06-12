@@ -15,7 +15,9 @@ const LoadingComponent = () => {
       />
       <div className="loader-wrapper">
         <span className="loader"></span>
-        <span className="loading-text">Yükleniyor...</span>
+        <span className="loading-text" style={{ marginLeft: 10 }}>
+          Yükleniyor...
+        </span>
       </div>
     </div>
   );

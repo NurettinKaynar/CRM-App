@@ -17,4 +17,10 @@ export class ApiUrls {
     "AppProject/GetTotalActiveAppProjectsCount";
   public static readonly GET_ALL_PROJECT = "AppProject/GetAllAsy";
   public static readonly GET_PROJECT_BY_ID = "AppProject/GetAppProjectsDetail";
+  public static readonly GET_PRODUCT_LIST = "ProductOffer/GetProductOfferList";
+  public static readonly GET_PRODUCT_BY_ID =
+    "ProductOffer/GetProductOffersDetail";
+  public static readonly DELETE_PRODUCT_BY_ID = "ProductOffer/DeleteAsy";
+  public static readonly UPDATE_PRODUCT = "ProductOffer/UpdateAsy";
+  public static readonly CREATE_PRODUCT = "ProductOffer/CreateAsy";
 }

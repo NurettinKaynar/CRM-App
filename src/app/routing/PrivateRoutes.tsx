@@ -16,6 +16,9 @@ const PrivateRoutes = () => {
   const ProjectManagement = lazy(
     () => import("../project-management/ProjectWrapper")
   );
+  const ProductWrapper = lazy(
+    () => import("../product-management/productWrapper")
+  );
 
   return (
     <Routes>
@@ -72,6 +75,14 @@ const PrivateRoutes = () => {
           element={
             <SuspensedView>
               <ProjectManagement />
+            </SuspensedView>
+          }
+        />
+        <Route
+          path="product-operation/*"
+          element={
+            <SuspensedView>
+              <ProductWrapper />
             </SuspensedView>
           }
         />

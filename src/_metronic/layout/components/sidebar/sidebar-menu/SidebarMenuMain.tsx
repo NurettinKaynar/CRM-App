@@ -36,6 +36,12 @@ const SidebarMenuMain = () => {
         title="Personel Listesi"
         fontIcon="bi-person"
       />
+      <SidebarMenuItem
+        to="/product-operation/products"
+        icon="lots-shopping"
+        title="Ürün Listesi"
+        fontIcon="lots-shopping"
+      />
       {/* <SidebarMenuItem
         to="/builder"
         icon="switch"

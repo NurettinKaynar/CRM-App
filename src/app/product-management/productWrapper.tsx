@@ -6,6 +6,7 @@ import { ToolbarWrapper } from "../../_metronic/layout/components/toolbar";
 import { ProjectHeader } from "../project-management/components/ProjectHeader/ProjectHeader";
 import Events from "../project-management/pages/Events/Events";
 import ProjectList from "../project-management/pages/ProjectList/ProjectList";
+import ProductList from "./productList/ProductList";
 
 const usersBreadcrumbs: Array<PageLink> = [
   {
@@ -31,9 +32,10 @@ const productWrapper = () => {
             <>
               <PageTitle breadcrumbs={usersBreadcrumbs}>Ürün Listesi</PageTitle>
               <Content>
-                <div className="app-content ">
+                <div className="app-content">
                   <div className="app-container container-xxl">
                     <ToolbarWrapper />
+                    <ProductList />
                   </div>
                 </div>
               </Content>

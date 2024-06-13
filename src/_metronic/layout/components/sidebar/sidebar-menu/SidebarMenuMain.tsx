@@ -17,7 +17,8 @@ const SidebarMenuMain = () => {
       <SidebarMenuItemWithSub
         to="/project-operation/projects"
         title="Proje Listesi"
-        fontIcon="bi-app-indicator">
+        icon="abstract-26"
+        fontIcon="bi-abstract-26">
         <SidebarMenuItem
           to="/project-operation/projects"
           title="Proje Listesi"

@@ -296,13 +296,7 @@ const AddEditTaskModal = ({show,handleClose,state,taskId}:AddEditModalProps) => 
                       className="form-control"
                       placeholder="Bitiş Tarihi Giriniz"
                     />
-                {taskForm.touched.startingDate && taskForm.errors.startingDate && (
-                  <div className="fv-plugins-message-container">
-                    <div className="fv-help-block">
-                      {taskForm.errors.startingDate}
-                    </div>
-                  </div>
-                )}
+         
               </Form.Group>
                 </div>
                 <div className="col-md-6 col-12">
@@ -322,13 +316,7 @@ const AddEditTaskModal = ({show,handleClose,state,taskId}:AddEditModalProps) => 
                       className="form-control"
                       placeholder="Bitiş Tarihi Giriniz"
                     />
-                {taskForm.touched.endDate && taskForm.errors.endDate && (
-                  <div className="fv-plugins-message-container">
-                    <div className="fv-help-block">
-                      {taskForm.errors.endDate}
-                    </div>
-                  </div>
-                )}
+            
               </Form.Group>
               </div>
               <div className="row">

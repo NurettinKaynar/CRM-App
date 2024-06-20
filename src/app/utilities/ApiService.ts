@@ -23,4 +23,9 @@ export class ApiUrls {
   public static readonly DELETE_PRODUCT_BY_ID = "ProductOffer/DeleteAsy";
   public static readonly UPDATE_PRODUCT = "ProductOffer/UpdateAsy";
   public static readonly CREATE_PRODUCT = "ProductOffer/CreateAsy";
+  public static readonly GET_TASK_BY_ID="AppTask/GetByIdAsy"
+  public static readonly CREATE_TASK="AppTask/CreateAsy"
+  public static readonly UPDATE_TASK="AppTask/UpdateAsy"
+  public static readonly DELETE_TASK="AppTask/DeleteAsy"
+
 }

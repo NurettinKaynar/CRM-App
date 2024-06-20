@@ -5,20 +5,13 @@ import { getCSSVariableValue } from "../../_metronic/assets/ts/_utils";
 import { WithChildren } from "../../_metronic/helpers";
 import { MasterLayout } from "../../_metronic/layout/MasterLayout";
 import { DashboardWrapper } from "../pages/dashboard/DashboardWrapper";
-import EmployeeWrapper from "../employee-management/EmployeeWrapper";
+
 
 const PrivateRoutes = () => {
-  const ProfilePage = lazy(() => import("../modules/profile/ProfilePage"));
-  const WizardsPage = lazy(() => import("../modules/wizards/WizardsPage"));
-  const AccountPage = lazy(() => import("../modules/accounts/AccountPage"));
-  const WidgetsPage = lazy(() => import("../modules/widgets/WidgetsPage"));
-  const ChatPage = lazy(() => import("../modules/apps/chat/ChatPage"));
-  const ProjectManagement = lazy(
-    () => import("../project-management/ProjectWrapper")
-  );
-  const ProductWrapper = lazy(
-    () => import("../product-management/productWrapper")
-  );
+  const ProjectManagement = lazy(() => import("../project-management/ProjectWrapper"));
+  const ProductWrapper = lazy(() => import("../product-management/productWrapper"));
+  const TaskListWrapper = lazy(() => import("../task-management/TaskListWrapper"));
+  const EmployeeWrapper = lazy(() => import("../employee-management/EmployeeWrapper"));
 
   return (
     <Routes>
@@ -62,14 +55,15 @@ const PrivateRoutes = () => {
             </SuspensedView>
           }
         />
+        */}
         <Route
-          path="apps/chat/*"
+          path="task-operation/*"
           element={
             <SuspensedView>
-              <ChatPage />
+              <TaskListWrapper/>
             </SuspensedView>
           }
-        /> */}
+        /> 
         <Route
           path="project-operation/*"
           element={

@@ -1,18 +1,13 @@
-import React, { Suspense } from "react";
-import { Routes, Route, Outlet, Navigate } from "react-router-dom";
-import {
-  LayoutSplashScreen,
-  PageLink,
-  PageTitle,
-} from "../../_metronic/layout/core";
-import { ProjectListWrapper } from "../modules/apps/user-management/project-list/ProjectList";
-import ProjectList from "./pages/ProjectList/ProjectList";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { Content } from "../../_metronic/layout/components/content";
-import { Header } from "../../_metronic/layout/components/header/Header";
-import { ProfileHeader } from "../modules/profile/ProfileHeader";
 import { ToolbarWrapper } from "../../_metronic/layout/components/toolbar";
+import {
+  PageLink,
+  PageTitle
+} from "../../_metronic/layout/core";
 import { ProjectHeader } from "./components/ProjectHeader/ProjectHeader";
 import Events from "./pages/Events/Events";
+import ProjectList from "./pages/ProjectList/ProjectList";
 
 const usersBreadcrumbs: Array<PageLink> = [
   {

@@ -1,4 +1,4 @@
-import { Step, StepCounter } from "../../../shared/StepperComp/StepperComp";
+import {  StepCounter } from "../../../shared/StepperComp/StepperComp";
 
 export const steps: StepCounter = {
   totalSteps: 4,

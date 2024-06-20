@@ -1,10 +1,8 @@
-import { useIntl } from "react-intl";
-import { KTIcon } from "../../../../helpers";
+
 import { SidebarMenuItemWithSub } from "./SidebarMenuItemWithSub";
 import { SidebarMenuItem } from "./SidebarMenuItem";
 
 const SidebarMenuMain = () => {
-  const intl = useIntl();
 
   return (
     <>
@@ -36,6 +34,12 @@ const SidebarMenuMain = () => {
         icon="user"
         title="Personel Listesi"
         fontIcon="bi-person"
+      />
+      <SidebarMenuItem
+        to="/task-operation/task-list"
+        icon="add-item"
+        title="Görev Listesi"
+        fontIcon="bi-add-item"
       />
       <SidebarMenuItem
         to="/product-operation/products"

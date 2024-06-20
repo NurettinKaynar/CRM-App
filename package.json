@@ -17,6 +17,7 @@
     "@fullcalendar/daygrid": "^6.1.14",
     "@fullcalendar/react": "^6.1.14",
     "@popperjs/core": "^2.11.6",
+    "@sweetalert2/theme-bootstrap-4": "^5.0.16",
     "animate.css": "4.1.1",
     "apexcharts": "3.35.0",
     "axios": "1.6.5",
@@ -47,6 +48,7 @@
     "react-toastify": "^10.0.5",
     "react-topbar-progress-indicator": "4.1.1",
     "socicon": "3.0.5",
+    "sweetalert2": "^11.11.1",
     "yup": "^1.4.0"
   },
   "devDependencies": {

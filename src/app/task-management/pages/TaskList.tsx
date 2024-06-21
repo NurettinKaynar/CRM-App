@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import { deleteTaskById, getTaskList } from '../core/_requests';
 import { AxiosResponse } from 'axios';
 import AddEditTaskModal from '../components/AddEditTaskModal';
+import { TaskStatus } from '../../utilities/enums';
 
 const TaskList = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -31,7 +32,7 @@ const TaskList = () => {
     getTaskList(requestBody).then((res:AxiosResponse<any>)=>{
       if(res.status===200||res.status===201){
 
-        setTaskListData(res.data)
+        setTaskListData(res.data.list)
       }
     }).catch(err=>{
       console.error("GÖrev Listesi Getirilemedi",err);
@@ -66,11 +67,11 @@ const TaskList = () => {
 
       title: "Görevi silmek istediğinizden emin misiniz",
       showCancelButton: true,
-      confirmButtonText: "Kaydet",
-      cancelButtonText:"Vazgeç",
+      confirmButtonText: "Evet",
+      cancelButtonText:"Hayır",
       customClass:{
         confirmButton:"btn fw-bold btn-danger",
-        cancelButton:"btn fw-bold btn-active-light-primary",
+        cancelButton:"btn fw-bold btn-light btn-active-light-primary",
       },
       icon:"question",
 
@@ -157,6 +158,7 @@ const TaskList = () => {
                 <th>Açıklaması</th>
                 <th>Başlangıç Tarihi</th>
                 <th>Bitiş Tarihi</th>
+                <th>Görev Durumu</th>
                 <th>İşlemler</th>
               </tr>
             </thead>
@@ -168,6 +170,7 @@ const TaskList = () => {
                     <td>{task.description}</td>
                     <td>{moment(task.startingDate).format("DD/MM/YYYY")}</td>
                     <td>{moment(task.endDate).format("DD/MM/YYYY")}</td>
+                    <td><span className={`badge fw-bold me-auto ${task.isCompleted===TaskStatus.NotCompleted?"badge-light-primary":"badge-light-success"}`}>{task.isCompleted===TaskStatus.NotCompleted?"Tamamlanmadı":"Tamamlandı"}</span></td>
                     <td className="d-flex align-items-center gap-2">
                       <ActionButtons
                         onClickEdit={() => handleEditTask(task.id)}

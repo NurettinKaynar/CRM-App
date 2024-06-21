@@ -23,12 +23,12 @@ const ActionButtons = ({
         <Dropdown.Item
           className="menu-item px-3"
           onClick={() => onClickEdit(true)}>
-          <a className="menu-link px-3">Düzenle</a>
+          <span className="menu-link px-3">Düzenle</span>
         </Dropdown.Item>
         <Dropdown.Item
           className="menu-item px-3"
           onClick={() => onClickDelete(true)}>
-          <a className="menu-link px-3">Sil</a>
+          <span className="menu-link px-3">Sil</span>
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>

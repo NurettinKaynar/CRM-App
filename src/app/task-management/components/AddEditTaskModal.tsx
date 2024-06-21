@@ -10,6 +10,7 @@ import { Turkish } from "flatpickr/dist/l10n/tr";
 import { KTIcon } from '../../../_metronic/helpers';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
+import { TaskStatus } from '../../utilities/enums';
 interface AddEditModalProps {
     show: boolean;
     handleClose: (e: boolean) => void;
@@ -18,8 +19,8 @@ interface AddEditModalProps {
   }
 
   const validation=Yup.object().shape({
-    Tite: Yup.string().required("Zorunlu Alan"),
-    Description: Yup.string().required("Zorunlu Alan"),
+    tite: Yup.string().required("Zorunlu Alan"),
+    description: Yup.string().required("Zorunlu Alan"),
     isCompleted: Yup.number().required("Zorunlu Alan"),
     startingDate:Yup.date().required("Zorunlu Alan"),
     endDate:Yup.date().required("Zorunlu Alan")
@@ -27,9 +28,9 @@ interface AddEditModalProps {
   
 const AddEditTaskModal = ({show,handleClose,state,taskId}:AddEditModalProps) => {
         const [initialValues, setInitialValues] = useState({
-            Tite:"",
-            Description:"",
-            isCompleted:0,
+            tite:"",
+            description:"",
+            isCompleted:TaskStatus.NotCompleted,
             startingDate:new Date(),
             endDate:new Date(),
         });
@@ -62,17 +63,20 @@ const AddEditTaskModal = ({show,handleClose,state,taskId}:AddEditModalProps) => 
                     if(res.status===200){
                         console.log("editlenecek",res.data);
                         setInitialValues({
-                          Tite:res.data.Tite,
-                          Description:res.data.Description,
+                          tite:res.data.tite,
+                          description:res.data.description,
                           isCompleted:res.data.isCompleted,
                           startingDate:new Date(res.data.startingDate),
                           endDate:new Date(res.data.endDate),
                         })
-                        taskForm.setFieldValue("Tite",res.data.Tite)
-                        taskForm.setFieldValue("Description",res.data.Description)
+                        taskForm.setFieldValue("tite",res.data.tite)
+                        taskForm.setFieldValue("description",res.data.description)
                         taskForm.setFieldValue("isCompleted",res.data.isCompleted)
                         taskForm.setFieldValue("startingDate",res.data.startingDate)
                         taskForm.setFieldValue("endDate",res.data.endDate)
+
+                        console.log("formValue",taskForm.values);
+                        
 
                     }
             })
@@ -94,7 +98,7 @@ const AddEditTaskModal = ({show,handleClose,state,taskId}:AddEditModalProps) => 
       }).then((result) => {
        
         if (result.isConfirmed) {
-          const request=taskForm.values
+          const request:any=taskForm.values
           request.isCompleted=Number(request.isCompleted)
           createTask(request).then((res:AxiosResponse<any>)=>{
             if(res.status===200){
@@ -229,24 +233,24 @@ const AddEditTaskModal = ({show,handleClose,state,taskId}:AddEditModalProps) => 
                 <Form.Label>Görev Adı</Form.Label>
                 <Form.Control
                   placeholder="Görev Adı"
-                  {...taskForm.getFieldProps("Tite")}
+                  {...taskForm.getFieldProps("tite")}
                   className={clsx(
                     "form-control bg-transparent",
                     {
                       "is-invalid":
-                        taskForm.touched.Tite && taskForm.errors.Tite,
+                        taskForm.touched.tite && taskForm.errors.tite,
                     },
                     {
                       "is-valid":
-                        taskForm.touched.Tite &&
-                        !taskForm.errors.Tite,
+                        taskForm.touched.tite &&
+                        !taskForm.errors.tite,
                     }
                   )}
                 />
-                {taskForm.touched.Tite && taskForm.errors.Tite && (
+                {taskForm.touched.tite && taskForm.errors.tite && (
                   <div className="fv-plugins-message-container">
                     <div className="fv-help-block">
-                      {taskForm.errors.Tite}
+                      {taskForm.errors.tite}
                     </div>
                   </div>
                 )}
@@ -256,24 +260,24 @@ const AddEditTaskModal = ({show,handleClose,state,taskId}:AddEditModalProps) => 
                 <Form.Control
                 as="textarea"
                   placeholder="Görev Açıklaması"
-                  {...taskForm.getFieldProps("Description")}
+                  {...taskForm.getFieldProps("description")}
                   className={clsx(
                     "form-control bg-transparent",
                     {
                       "is-invalid":
-                        taskForm.touched.Description && taskForm.errors.Description,
+                        taskForm.touched.description && taskForm.errors.description,
                     },
                     {
                       "is-valid":
-                        taskForm.touched.Description &&
-                        !taskForm.errors.Description,
+                        taskForm.touched.description &&
+                        !taskForm.errors.description,
                     }
                   )}
                 />
-                {taskForm.touched.Description && taskForm.errors.Description && (
+                {taskForm.touched.description && taskForm.errors.description && (
                   <div className="fv-plugins-message-container">
                     <div className="fv-help-block">
-                      {taskForm.errors.Description}
+                      {taskForm.errors.description}
                     </div>
                   </div>
                 )}
@@ -321,6 +325,7 @@ const AddEditTaskModal = ({show,handleClose,state,taskId}:AddEditModalProps) => 
               </div>
               <div className="row">
                 <Form.Label className='col-12'>Görev Durumu</Form.Label>
+          
                 <Form.Group className='col'>
                 <label className="btn btn-outline btn-outline-dashed btn-active-light-primary  d-flex text-start p-6">
                      
@@ -328,8 +333,10 @@ const AddEditTaskModal = ({show,handleClose,state,taskId}:AddEditModalProps) => 
                           <Form.Control
                            {...taskForm.getFieldProps("isCompleted")}
                           type="radio"
+                          checked={taskForm.values.isCompleted===TaskStatus.Completed}
                           className="form-check-input"
-                          value={1}
+                          value={TaskStatus.Completed}
+                          onChange={(e)=>taskForm.setFieldValue("isCompleted",TaskStatus.Completed)}
                           >
 
                           </Form.Control>
@@ -349,8 +356,10 @@ const AddEditTaskModal = ({show,handleClose,state,taskId}:AddEditModalProps) => 
                           <Form.Control
                            {...taskForm.getFieldProps("isCompleted")}
                           type="radio"
+                          checked={taskForm.values.isCompleted===TaskStatus.NotCompleted}
+                          onChange={(e)=>taskForm.setFieldValue("isCompleted",TaskStatus.NotCompleted)}
                           className="form-check-input"
-                          value={0}
+                          value={TaskStatus.NotCompleted}
                           >
 
                           </Form.Control>

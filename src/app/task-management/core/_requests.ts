@@ -17,11 +17,11 @@ const getTaskById=(taskId:number):Promise<any>=>{
     })
 }
 const createTask=(task:Object):Promise<any>=>{
-    return axios.post(`${API_URL}${ApiUrls.CREATE_TASK}`,{task})
+    return axios.post(`${API_URL}${ApiUrls.CREATE_TASK}`,task)
 } 
 
 const updateTask=(task:Object):Promise<any>=>{
-    return axios.put(`${API_URL}${ApiUrls.UPDATE_TASK}`,{task})
+    return axios.put(`${API_URL}${ApiUrls.UPDATE_TASK}`,task)
 }
 
 const deleteTaskById=(taskId:number):Promise<any>=>{

@@ -53,6 +53,7 @@ const TaskList = () => {
 
   const handleCloseModal=()=>{
    setShowAddEditTaskModal(false);
+   handleGetTaskList(currentPage,searchTerm)
   }
 
   const handleCreateOpenAddEditModal=()=>{

@@ -19,7 +19,6 @@ import {
 
 import StepperComp, { Step } from "../../../../shared/StepperComp/StepperComp";
 import { steps } from "../../helpers/steps";
-import moment from "moment";
 
 interface CreateAppModalProps {
   show: boolean;
@@ -34,12 +33,9 @@ const validate = Yup.object().shape({
   detail: Yup.string().required("Zorunlu Alan"),
   startingDate: Yup.string().required("Zorunlu Alan"),
   endDate: Yup.string().required("Zorunlu Alan"),
+  isCompleted: Yup.bool().required("Zorunlu Alan"),
 });
-const stageDataFormValidate = Yup.object().shape({
-  description: Yup.string().required(),
-  startingDate: Yup.date().required(),
-  endDate: Yup.date().required(),
-});
+
 
 const CreateAppModal = ({
   show,
@@ -53,6 +49,7 @@ const CreateAppModal = ({
     detail: "",
     startingDate: "",
     endDate: "",
+    isCompleted:false,
     stages: [],
     relateds: [],
   });
@@ -104,13 +101,14 @@ const CreateAppModal = ({
         endDate: reqData.endDate || "",
         detail: reqData.detail || "",
         stages: reqData.stages || "",
+        isCompleted: reqData.isCompleted || "",
         relateds: reqData.relateds || [],
       });
     });
   };
 
   useEffect(() => {
-    if (state === "Edit") {
+    if (state === "Edit"&&projectId!==0) {
       handleGetProject();
     } else {
       setInitialValues({
@@ -119,6 +117,7 @@ const CreateAppModal = ({
         startingDate: "",
         endDate: "",
         detail: "",
+        isCompleted: false,
         stages: [],
         relateds: [],
       });
@@ -126,7 +125,7 @@ const CreateAppModal = ({
   }, [state, projectId, show]);
 
   useEffect(() => {
-    if (activeStep === 3) {
+    if (activeStep === 2) {
       handleGetAdminList();
     }
     if (activeStep === 3) {
@@ -155,7 +154,6 @@ const CreateAppModal = ({
     setEmployeeListData([]);
     formik.resetForm();
     AdminDataForm.resetForm();
-    stagedDataForm.resetForm();
     employeeDataForm.resetForm();
   };
 
@@ -186,22 +184,11 @@ const CreateAppModal = ({
     },
   });
 
-  const stagedDataForm = useFormik({
-    initialValues: {
-      description: "",
-      startingDate: "",
-      endDate: "",
-    },
-    validationSchema: stageDataFormValidate,
-    enableReinitialize: true,
-    onSubmit: (values) => {
-      handleStagesSubmitData(values);
-    },
-  });
+
 
   const AdminDataForm = useFormik({
     initialValues: {
-      adminId: "",
+      adminId: null,
       name: "",
       surname: "",
     },
@@ -212,6 +199,7 @@ const CreateAppModal = ({
         (x) => x.id === Number(values.adminId)
       );
       if (selectedAdmin) {
+        values.adminId = selectedAdmin.id;
         values.name = selectedAdmin.name;
         values.surname = selectedAdmin.surname;
       }
@@ -226,7 +214,7 @@ const CreateAppModal = ({
 
   const employeeDataForm = useFormik({
     initialValues: {
-      employeeId: "",
+      employeeId: null,
       name: "",
       surname: "",
     },
@@ -237,6 +225,7 @@ const CreateAppModal = ({
         (x) => x.id === Number(values.employeeId)
       );
       if (selectedEmployee) {
+        values.employeeId = selectedEmployee.id;
         values.name = selectedEmployee.name;
         values.surname = selectedEmployee.surname;
       }
@@ -248,23 +237,12 @@ const CreateAppModal = ({
     },
   });
 
-  const handleStagesSubmitData = (values: any) => {
-    const stages: any[] = formik.values.stages ? [...formik.values.stages] : [];
-    stages.push(values);
-    stagedDataForm.resetForm();
-    formik.setFieldValue("stages", stages);
-  };
+
 
   const handleDeleteAdmin = (related: any) => {
     let admin: any[] = formik.values.relateds;
     admin = admin.filter((x) => x !== related);
     formik.setFieldValue("relateds", admin);
-  };
-
-  const handleDeleteStage = (stage: any) => {
-    let stageData: any[] = formik.values.stages;
-    stageData = stageData.filter((x) => x !== stage);
-    formik.setFieldValue("stages", stageData);
   };
 
   const handleCreateObject = (formValues: any) => {
@@ -274,8 +252,9 @@ const CreateAppModal = ({
       detail: formValues.detail,
       startingDate: formValues.startingDate,
       endDate: formValues.endDate,
+      isCompleted: formValues.isCompleted,
       relateds: formValues.relateds,
-      stages: formValues.stages,
+
     };
     createProject(request)
       .then((res: AxiosResponse<any>) => {
@@ -296,7 +275,8 @@ const CreateAppModal = ({
       detail: formValues.detail,
       startingDate: formValues.startingDate,
       endDate: formValues.endDate,
-      stages: formValues.stages,
+      isCompleted: formValues.isCompleted,
+   
       relateds: formValues.relateds,
     };
 
@@ -332,7 +312,6 @@ const CreateAppModal = ({
             {/* begin::Nav*/}
             <StepperComp
               currentStep={activeStep}
-              totalSteps={steps.totalSteps}
               stepData={steps.stepData}
             />
             {/* end::Nav*/}
@@ -466,108 +445,59 @@ const CreateAppModal = ({
                       placeholder="Bitiş Tarihi Giriniz"
                     />
                   </Form.Group>
+                  <div className="row">
+                <Form.Label className='col-12'>Proje Durumu</Form.Label>
+          
+                <Form.Group className='col'>
+                <label className="btn btn-outline btn-outline-dashed btn-active-light-primary  d-flex text-start p-6">
+                     
+                        <span className="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
+                          <Form.Control
+                           {...formik.getFieldProps("isCompleted")}
+                          type="radio"
+                          checked={formik.values.isCompleted}
+                          className="form-check-input"
+                          value={true}
+                          onChange={(e)=>formik.setFieldValue("isCompleted",true)}
+                          >
+
+                          </Form.Control>
+                        </span>
+                        <span className="ms-5">
+                            <span className="fs-4 fw-bold text-gray-800 d-block">Tamamlandı</span>
+                        </span>
+                     
+                    </label>
+
+                </Form.Group>
+           
+                <Form.Group className='col'>
+                <label className="btn btn-outline btn-outline-dashed btn-active-light-primary  d-flex text-start p-6" >
+                     
+                        <span className="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
+                          <Form.Control
+                           {...formik.getFieldProps("isCompleted")}
+                          type="radio"
+                          checked={!formik.values.isCompleted}
+                          onChange={(e)=>formik.setFieldValue("isCompleted",false)}
+                          className="form-check-input"
+                          value={false}
+                          >
+
+                          </Form.Control>
+                        </span>
+                        <span className="ms-5">
+                            <span className="fs-4 fw-bold text-gray-800 d-block">Tamamlanmadı</span>
+                        </span>
+                     
+                    </label>
+
+                </Form.Group>
+           
+              </div>
                 </Form>
               ) : null}
-
               {activeStep === 2 ? (
-                <div className="row">
-                  <div className="col col-12">
-                    <Form className="row">
-                      <Form.Group
-                        className=" col-12 mb-3"
-                        controlId="exampleForm.ControlInput1">
-                        <Form.Label>Aşama Adı</Form.Label>
-                        <Form.Control
-                          placeholder="Aşama Adı"
-                          {...stagedDataForm.getFieldProps("description")}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="col-md-6 col-12 mb-3"
-                        controlId="exampleForm.ControlInput1">
-                        <Form.Label>Başlangıç Tarihi</Form.Label>
-
-                        <Flatpickr
-                          translate="yes"
-                          options={{
-                            locale: Turkish,
-                          }}
-                          {...stagedDataForm.getFieldProps("startingDate")}
-                          className="form-control"
-                          placeholder="Başlangıç Tarihi Giriniz"
-                          type="date"
-                          onChange={(value: any) => {
-                            stagedDataForm.setFieldValue(
-                              "startingDate",
-                              new Date(value)
-                            );
-                          }}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="col-md-6 col-12 mb-3"
-                        controlId="exampleForm.ControlInput1">
-                        <Form.Label>Bitiş Tarihi</Form.Label>
-
-                        <Flatpickr
-                          translate="yes"
-                          options={{
-                            locale: Turkish,
-                          }}
-                          {...stagedDataForm.getFieldProps("endDate")}
-                          className="form-control"
-                          placeholder="Bitiş Tarihi Giriniz"
-                          type="date"
-                          onChange={(value: any) => {
-                            stagedDataForm.setFieldValue(
-                              "endDate",
-                              new Date(value)
-                            );
-                          }}
-                        />
-                      </Form.Group>
-                    </Form>
-                  </div>
-                  <div className="col col-12">
-                    <button
-                      disabled={!stagedDataForm.isValid}
-                      type="button"
-                      className="btn btn-lg btn-primary me-3"
-                      onClick={stagedDataForm.submitForm}>
-                      <KTIcon iconName="plus" className="fs-3 me-1" /> Ekle
-                    </button>
-                  </div>
-                  <div className="col-12 mt-3">
-                    <div className="row">
-                      {formik.values.stages &&
-                        formik.values.stages.map((stage: any, idx: number) => (
-                          <div
-                            key={idx}
-                            className="col-12 card d-flex flex-row align-items-center justify-content-between p-3 m-2">
-                            <div className="d-flex flex-column gap-2">
-                              <h3>{stage.description}</h3>
-                              <span>
-                                {moment(stage.startingDate).format(
-                                  "DD/MM/YYYY"
-                                )}{" "}
-                                - {moment(stage.endDate).format("DD/MM/YYYY")}
-                              </span>
-                            </div>
-
-                            <button
-                              onClick={() => handleDeleteStage(stage)}
-                              type="button"
-                              className="btn btn-sm btn-light-danger ">
-                              <KTIcon iconName="trash" className="fs-3" />
-                            </button>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-
-              {activeStep === 3 ? (
                 <div className="row">
                   <div className="col-12">
                     <Form className="row">
@@ -586,7 +516,7 @@ const CreateAppModal = ({
                       <button
                         type="button"
                         className="btn btn-lg btn-light-primary me-3"
-                        onClick={AdminDataForm.submitForm}>
+                        onClick={()=>AdminDataForm.submitForm()}>
                         <KTIcon iconName="plus" className="fs-3 me-1" /> Ekle
                       </button>
                     </Form>
@@ -596,7 +526,7 @@ const CreateAppModal = ({
                       {formik.values.relateds &&
                         formik.values.relateds.map(
                           (related: any, idx: number) =>
-                            related.admin ? (
+                            related.admin||related.adminId ? (
                               <div
                                 key={idx}
                                 className="col-12 card d-flex flex-row align-items-center justify-content-between p-3 m-2">
@@ -625,7 +555,7 @@ const CreateAppModal = ({
                   </div>
                 </div>
               ) : null}
-              {activeStep === 4 ? (
+              {activeStep === 3 ? (
                 <div className="row">
                   <div className="col-12">
                     <Form className="row">

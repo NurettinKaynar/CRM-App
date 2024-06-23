@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 import { Form, Modal } from "react-bootstrap";
 import * as Yup from "yup";
 import { KTIcon } from "../../../../_metronic/helpers";
-import { createPersonnel, editPersonnel } from "../../core/_requests";
+import { createPersonnel, editPersonnel, getPersonnelById } from "../../core/_requests";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 interface PersonnelModalProps {
   show: boolean;
   handleClose: (e: boolean) => void;
   state: "Edit" | "Create";
-  personnel: any;
+  personnelId: number;
 }
 
 const personnelFormValidateScheme = Yup.object().shape({
@@ -22,19 +24,7 @@ const personnelFormValidateScheme = Yup.object().shape({
   password: Yup.string(),
 });
 
-const AddPersonnel = ({
-  show,
-  handleClose,
-  state,
-  personnel,
-}: PersonnelModalProps) => {
-  const handleCloseState = () => {
-    handleClose(true);
-    personnelForm.resetForm();
-  };
-  console.log("personel bilgisi", personnel);
-
-  const [isUserLoading, setIsUserLoading] = useState<boolean>();
+const AddPersonnel = ({show, handleClose,state,personnelId}: PersonnelModalProps) => {
   const [initialValues, setInitialValues] = useState({
     name: "",
     surname: "",
@@ -56,45 +46,163 @@ const AddPersonnel = ({
   });
 
   const handleCreatePersonnel = (formValues: any) => {
-    setIsUserLoading(true);
-    createPersonnel(formValues).then((res: AxiosResponse) => {
-      if (res.status === 200) {
-        setIsUserLoading(false);
-        handleCloseState();
+    Swal.fire({
+      title: "Personel Profili Kaydedilecektir Onaylıyor Musunuz?",
+      showCancelButton: true,
+      confirmButtonText: "Evet",
+      cancelButtonText:"Vazgeç",
+      customClass:{
+        confirmButton:"btn fw-bold btn-primary",
+        cancelButton:"btn btn-text fw-bold btn-active-light-primary",
+      },
+      icon:"question",
+
+    }).then((result) => {
+     
+      if (result.isConfirmed) {
+        
+        createPersonnel(formValues).then((res:AxiosResponse<any>)=>{
+          if(res.status===200){
+            toast.success("Personel Kaydedildi!");
+            Swal.fire({
+              title:"Personel Kaydedildi!",
+              icon:"success",
+              confirmButtonText:"Tamam",
+              customClass:{
+                confirmButton:"btn fw-bold btn-primary",
+              }
+            }).then(()=>{
+              handleCloseState();
+            })
+          }
+        }).catch((err:any)=>{
+          toast.error("Personel Kaydedilemedi!");
+          Swal.fire({
+            title:"Personel Kaydedilemedi!",
+            icon:"error",
+            confirmButtonText:"Tamam",
+            customClass:{
+              confirmButton:"btn fw-bold btn-primary",
+            }
+          }).then(()=>{
+            handleCloseState();
+          })
+        })
+
+      } else if (result.isDismissed) {
+        Swal.fire({
+          title:"İptal Edildi",
+          icon:"info",
+          confirmButtonText:"Tamam",
+          customClass:{
+            confirmButton:"btn fw-bold btn-primary",
+          }
+        })
       }
     });
   };
 
+  const handleGetPersonnelById=()=>{
+    getPersonnelById(personnelId).then((res: AxiosResponse) => {
+      if(res.status === 200) {
+        const perInfo=res.data
+        setInitialValues({
+          name:perInfo.name,
+          surname:perInfo.surname,
+          email:perInfo.email,
+          password:perInfo.password,
+        })
+        personnelForm.setFieldValue("name",perInfo.name)
+        personnelForm.setFieldValue("surname",perInfo.surname)
+        personnelForm.setFieldValue("email",perInfo.email)
+        personnelForm.setFieldValue("password",perInfo.password)
+       
+      }
+    })
+  }
+
+
   const handleUpdatePersonnel = (formValues: any) => {
-    setIsUserLoading(true);
-    formValues.id = personnel.id;
-    editPersonnel(formValues).then((res: AxiosResponse) => {
-      if (res.status === 200) {
-        setIsUserLoading(false);
-        handleCloseState();
+    formValues.id = personnelId;
+    updatePersonnel(formValues)
+   
+  };
+  const updatePersonnel=(empInfo:any)=>{
+    Swal.fire({
+      title: "Personel Profili Güncellenecektir Onaylıyor Musunuz?",
+      showCancelButton: true,
+      confirmButtonText: "Evet",
+      cancelButtonText:"Vazgeç",
+      customClass:{
+        confirmButton:"btn fw-bold btn-primary",
+        cancelButton:"btn btn-text fw-bold btn-active-light-primary",
+      },
+      icon:"question",
+
+    }).then((result) => {
+     
+      if (result.isConfirmed) {
+        const request:any=empInfo
+        editPersonnel(request).then((res:AxiosResponse<any>)=>{
+          if(res.status===200){
+            toast.success("Personel Güncellendi");
+            Swal.fire({
+              title:"Personel Güncellendi!",
+              icon:"success",
+              confirmButtonText:"Tamam",
+              customClass:{
+                confirmButton:"btn fw-bold btn-primary",
+              }
+            }).then(()=>{
+              handleCloseState();
+            })
+          }
+        }).catch((err:any)=>{
+          toast.error("Personel Güncellenemedi!");
+          Swal.fire({
+            title:"Personel Güncellenemedi!",
+            icon:"error",
+            confirmButtonText:"Tamam",
+            customClass:{
+              confirmButton:"btn fw-bold btn-primary",
+            }
+          }).then(()=>{
+            handleCloseState();
+          })
+        })
+
+      } else if (result.isDismissed) {
+        Swal.fire({
+          title:"İptal Edildi",
+          icon:"info",
+          confirmButtonText:"Tamam",
+          customClass:{
+            confirmButton:"btn fw-bold btn-primary",
+          }
+        })
       }
     });
+
+
+  }
+  const handleCloseState = () => {
+    handleClose(true);
+    personnelForm.resetForm();
   };
 
   useEffect(() => {
-    console.log("state", state);
-
-    if (state === "Edit" && personnel) {
-      setInitialValues({
-        name: personnel.name,
-        surname: personnel.surname,
-        email: personnel.email,
-        password: personnel.password,
-      });
+    if (state === "Edit"&& personnelId!==0) {
+      handleGetPersonnelById()
     } else {
       setInitialValues({
+        
         name: "",
         surname: "",
         email: "",
         password: "",
       });
     }
-  }, [state, personnel, show]);
+  }, [state, personnelId, show]);
 
   return (
     <Modal
@@ -242,7 +350,7 @@ const AddPersonnel = ({
                 onClick={() => handleCloseState()}
                 className="btn btn-light me-3"
                 data-kt-users-modal-action="cancel"
-                disabled={personnelForm.isSubmitting || isUserLoading}>
+                disabled={personnelForm.isSubmitting}>
                 Vazgeç
               </button>
 
@@ -251,18 +359,11 @@ const AddPersonnel = ({
                 className="btn btn-primary"
                 data-kt-users-modal-action="submit"
                 disabled={
-                  isUserLoading ||
                   personnelForm.isSubmitting ||
                   !personnelForm.isValid ||
                   !personnelForm.touched
                 }>
                 <span className="indicator-label">Kaydet</span>
-                {(personnelForm.isSubmitting || isUserLoading) && (
-                  <span className="indicator-progress">
-                    Lütfen bekleyin...{" "}
-                    <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                  </span>
-                )}
               </button>
             </div>
           </div>

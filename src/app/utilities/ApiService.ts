@@ -10,9 +10,9 @@ export class ApiUrls {
   public static readonly DELETE_PROJECT = "AppProject/DeleteAsy";
   public static readonly GET_ADMIN_LIST = "Admin/GetAdminList";
   public static readonly GET_EMPLOYEE_LIST = "Employee/GetEmployeeList";
-  public static readonly CREATE_PERSONNEL = "Employee/CreateAsy";
+  public static readonly CREATE_PERSONNEL = "Employee/RegisterEmployee";
   public static readonly DELETE_PERSONNEL = "Employee/DeleteAsy";
-  public static readonly EDIT_PERSONNEL = "Employee/EditAsy";
+  public static readonly EDIT_PERSONNEL = "Employee/UpdateAsy";
   public static readonly GET_TOTAL_ACTIVE_PROJECT_LIST =
     "AppProject/GetTotalActiveAppProjectsCount";
   public static readonly GET_ALL_PROJECT = "AppProject/GetAllAsy";
@@ -27,5 +27,6 @@ export class ApiUrls {
   public static readonly CREATE_TASK="AppTask/CreateAsy"
   public static readonly UPDATE_TASK="AppTask/UpdateAsy"
   public static readonly DELETE_TASK="AppTask/DeleteAsy"
+  public static readonly GET_PERSONNEL_BY_ID="Employee/GetByIdAsy";
 
 }

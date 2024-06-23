@@ -19,7 +19,8 @@ const Events = () => {
       res.data.forEach((project) => {
         finalData.push({
           id: project.id,
-          title: project.tite,
+          title: project.description,
+          isCompleted: project.isCompleted,
           start: new Date(project.startingDate),
           end: new Date(project.endDate),
         });
@@ -43,8 +44,9 @@ const Events = () => {
   }, []);
 
   function renderEventContent(eventInfo: any) {
+    const status=eventInfo.event._def.extendedProps.isCompleted
     return (
-      <span className=" cursor-pointer bg-success text-inverse-success w-100 d-block border-success">
+      <span className={`cursor-pointer ${status?'bg-success text-inverse-success':'bg-primary text-inverse-primary'} w-100 d-block border-success`}>
         {eventInfo.event.title}
       </span>
     );

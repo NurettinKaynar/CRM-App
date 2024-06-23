@@ -13,9 +13,12 @@ import { toast } from "react-toastify";
 import { TaskStatus } from "../../utilities/enums";
 import StepperComp, { Step } from "../../shared/StepperComp/StepperComp";
 import { steps } from "../helpers/steps";
-import ProjectDropdown from "../../shared/ProjectDropdown/ProjectDropdown";
 import Dropzone, { useDropzone } from "react-dropzone";
-import { getAdminsData, getEmployeeList } from "../../project-management/core/_request";
+import {
+  getAdminsData,
+  getEmployeeList,
+} from "../../project-management/core/_request";
+import { uploadImage } from "../../shared/core/_requests";
 interface AddEditModalProps {
   show: boolean;
   handleClose: (e: boolean) => void;
@@ -37,7 +40,6 @@ const AddEditTaskModal = ({
   state,
   taskId,
 }: AddEditModalProps) => {
-  const [adminListData, setAdminListData] = useState<any[]>([]);
   const [employeeListData, setEmployeeListData] = useState<any[]>([]);
   const [files, setFiles] = useState<any[]>([]);
   const [initialValues, setInitialValues] = useState({
@@ -49,7 +51,6 @@ const AddEditTaskModal = ({
     relateds: [],
   });
   const [activeStep, setActiveStep] = useState(1);
-
   const handleDrop = (e: File[]) => {
     console.log("gelen dosya", e);
     const final: any[] = [];
@@ -112,14 +113,10 @@ const AddEditTaskModal = ({
   const handleCloseState = () => {
     handleClose(true);
     setActiveStep(1);
-    setAdminListData([]);
+    setFiles([]);
     setEmployeeListData([]);
- AdminDataForm.resetForm();
+    taskForm.resetForm();
     employeeDataForm.resetForm();
-  };
-  // TODO: Seçilen Bağlı Proje Eklenecek
-  const handleSelectedProject = (e: any) => {
-    console.log("seçilen proje", e);
   };
 
   const handleGetTaskById = () => {
@@ -147,6 +144,23 @@ const AddEditTaskModal = ({
     }
   };
 
+  const handleUploadImage = (getTaskId?: number) => {
+    const requestParams = {
+      appTaskId: state === "Edit" ? taskId : getTaskId,
+    };
+    if (files.length > 0) {
+      files.map((file: File) => {
+        uploadImage(requestParams, file)
+          .then((res: AxiosResponse) => {
+            console.log("görsel yüklendi", res.data);
+          })
+          .catch((error: AxiosError) => {
+            console.error("görsel yüklenemedi", error);
+          });
+      });
+    }
+  };
+
   const handleCreateTask = () => {
     Swal.fire({
       title: "Görev Oluşturulacaktır onaylıyor musunuz?",
@@ -165,6 +179,8 @@ const AddEditTaskModal = ({
         createTask(request)
           .then((res: AxiosResponse<any>) => {
             if (res.status === 200) {
+              handleUploadImage(res.data.id);
+              console.log("res.data.task", res.data);
               toast.success("Görev Başarıyla Oluşturuldu");
               Swal.fire({
                 title: "Görev Oluşturuldu!",
@@ -174,7 +190,7 @@ const AddEditTaskModal = ({
                   confirmButton: "btn fw-bold btn-primary",
                 },
               }).then(() => {
-                handleClose(true);
+                handleCloseState();
               });
             }
           })
@@ -188,7 +204,7 @@ const AddEditTaskModal = ({
                 confirmButton: "btn fw-bold btn-primary",
               },
             }).then(() => {
-              handleClose(true);
+              handleCloseState();
             });
           });
       } else if (result.isDismissed) {
@@ -264,32 +280,6 @@ const AddEditTaskModal = ({
     });
   };
 
-  const AdminDataForm = useFormik({
-    initialValues: {
-      adminId: null,
-      name: "",
-      surname: "",
-    },
-    enableReinitialize: true,
-
-    onSubmit: (values) => {
-      const selectedAdmin = adminListData.find(
-        (x) => x.id === Number(values.adminId)
-      );
-      if (selectedAdmin) {
-        values.adminId = selectedAdmin.id;
-        values.name = selectedAdmin.name;
-        values.surname = selectedAdmin.surname;
-      }
-      const relateds: any[] = taskForm.values.relateds
-        ? [...taskForm.values.relateds]
-        : [];
-      relateds.push(values);
-      taskForm.setFieldValue("relateds", relateds);
-     
-    },
-  });
-
   const employeeDataForm = useFormik({
     initialValues: {
       employeeId: null,
@@ -315,32 +305,12 @@ const AddEditTaskModal = ({
     },
   });
 
-
-
-  const handleDeleteAdmin = (related: any) => {
-    let admin: any[] = taskForm.values.relateds;
-    admin = admin.filter((x) => x !== related);
-    taskForm.setFieldValue("relateds", admin);
-  };
   const handleDeleteEmployee = (related: any) => {
     let employee: any[] = taskForm.values.relateds;
     employee = employee.filter((x) => x !== related);
     taskForm.setFieldValue("relateds", employee);
   };
 
-
-  const handleGetAdminList = () => {
-    getAdminsData()
-      .then((res: AxiosResponse<any[]>) => {
-        if (res.status === 200) {
-          console.log("admin Data Geldi", res.data);
-          setAdminListData(res.data);
-        }
-      }).catch((err: AxiosError) => {
-        console.error("adminData gelmedi", err);
-        setAdminListData([]);
-      });
-  };
   const handleGetGetEmployeeList = () => {
     getEmployeeList()
       .then((res: AxiosResponse<any[]>) => {
@@ -348,7 +318,8 @@ const AddEditTaskModal = ({
           console.log("employee Geldi", res.data);
           setEmployeeListData(res.data);
         }
-      }).catch((err: AxiosError) => {
+      })
+      .catch((err: AxiosError) => {
         console.error("adminData gelmedi", err);
         setEmployeeListData([]);
       });
@@ -357,16 +328,16 @@ const AddEditTaskModal = ({
   useEffect(() => {
     if (state === "Edit") {
       handleGetTaskById();
+    } else if (state === "Create") {
+      setActiveStep(1);
+      taskForm.resetForm();
+      employeeDataForm.resetForm();
     }
   }, [state]);
   useEffect(() => {
-    if(activeStep===3){
-      handleGetAdminList()
+    if (activeStep === 3) {
+      handleGetGetEmployeeList();
     }
-    if(activeStep===4){
-      handleGetGetEmployeeList()
-    }
-    
   }, [activeStep]);
 
   return (
@@ -563,13 +534,6 @@ const AddEditTaskModal = ({
                             </label>
                           </Form.Group>
                         </div>
-                        <Form.Group className="row">
-                          <Form.Label>Bağlı Proje Seçin</Form.Label>
-
-                          <ProjectDropdown
-                            selectedValue={handleSelectedProject}
-                          />
-                        </Form.Group>
                       </div>
                     </div>
                   </div>
@@ -630,16 +594,16 @@ const AddEditTaskModal = ({
                   )}
                 </Dropzone>
               )}
-              { activeStep===3&&(
-                  <div className="row">
+              {activeStep === 3 && (
+                <div className="row">
                   <div className="col-12">
                     <Form className="row">
                       <Form.Group className="col-12 mb-3">
-                        <Form.Label>Yönetici seçin ve ekleyin</Form.Label>
+                        <Form.Label>Çalışan Seçin</Form.Label>
                         <Form.Select
                           aria-label="Seçin"
-                          {...AdminDataForm.getFieldProps("adminId")}>
-                          {adminListData.map((admin, idx) => (
+                          {...employeeDataForm.getFieldProps("employeeId")}>
+                          {employeeListData.map((admin, idx) => (
                             <option key={idx} value={admin.id}>
                               {admin.name} {admin.surname}
                             </option>
@@ -649,7 +613,7 @@ const AddEditTaskModal = ({
                       <button
                         type="button"
                         className="btn btn-lg btn-light-primary me-3"
-                        onClick={()=>AdminDataForm.submitForm()}>
+                        onClick={employeeDataForm.submitForm}>
                         <KTIcon iconName="plus" className="fs-3 me-1" /> Ekle
                       </button>
                     </Form>
@@ -658,111 +622,45 @@ const AddEditTaskModal = ({
                     <div className="row">
                       {taskForm.values.relateds &&
                         taskForm.values.relateds.map(
-                          (related: any, idx: number) =>
-                            related.admin||related.adminId ? (
-                              <div
-                                key={idx}
-                                className="col-12 card d-flex flex-row align-items-center justify-content-between p-3 m-2">
-                                <div className="d-flex flex-column gap-2">
-                                  <h3>
-                                    {state === "Edit" && related.admin
-                                      ? related.admin.name
-                                      : related.name}{" "}
-                                    -{" "}
-                                    {state === "Edit" && related.admin
-                                      ? related.admin.surname
-                                      : related.surname}
-                                  </h3>
-                                </div>
+                          (related: any, idx: number) => (
+                            <div key={idx} className="col-12">
+                              <div className="row">
+                                {related.employeeId ? (
+                                  <div
+                                    key={idx}
+                                    className="col-12 card d-flex flex-row align-items-center justify-content-between p-3 m-2">
+                                    <div className="d-flex flex-column gap-2">
+                                      <h3>
+                                        {state === "Edit" && related.employee
+                                          ? related.employee.name
+                                          : related.name}{" "}
+                                        -{" "}
+                                        {state === "Edit" && related.employee
+                                          ? related.employee.surname
+                                          : related.surname}
+                                      </h3>
+                                    </div>
 
-                                <button
-                                  onClick={() => handleDeleteAdmin(related)}
-                                  type="button"
-                                  className="btn btn-sm btn-light-danger ">
-                                  <KTIcon iconName="trash" className="fs-3" />
-                                </button>
+                                    <button
+                                      onClick={() =>
+                                        handleDeleteEmployee(related)
+                                      }
+                                      type="button"
+                                      className="btn btn-sm btn-light-danger ">
+                                      <KTIcon
+                                        iconName="trash"
+                                        className="fs-3"
+                                      />
+                                    </button>
+                                  </div>
+                                ) : null}
                               </div>
-                            ) : null
+                            </div>
+                          )
                         )}
                     </div>
                   </div>
                 </div>
-              )}
-              {activeStep===4&&(
-                <div className="row">
-                <div className="col-12">
-                  <Form className="row">
-                    <Form.Group className="col-12 mb-3">
-                      <Form.Label>Çalışan Seçin</Form.Label>
-                      <Form.Select
-                        aria-label="Seçin"
-                        {...employeeDataForm.getFieldProps("employeeId")}>
-                        {employeeListData.map((admin, idx) => (
-                          <option key={idx} value={admin.id}>
-                            {admin.name} {admin.surname}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                    <button
-                      type="button"
-                      className="btn btn-lg btn-light-primary me-3"
-                      onClick={employeeDataForm.submitForm}>
-                      <KTIcon iconName="plus" className="fs-3 me-1" /> Ekle
-                    </button>
-                  </Form>
-                </div>
-                <div className="col-12">
-                  <div className="row">
-                    {taskForm.values.relateds &&
-                      taskForm.values.relateds.map(
-                        (related: any, idx: number) => (
-                          <div key={idx} className="col-12">
-                            <div className="row">
-                              {related.employeeId ? (
-                                <div
-                                  key={idx}
-                                  className="col-12 card d-flex flex-row align-items-center justify-content-between p-3 m-2">
-                                  <div className="d-flex flex-column gap-2">
-                                    <h3>
-                                      {state === "Edit" && related.employee
-                                        ? related.employee.name
-                                        : related.name}{" "}
-                                      -{" "}
-                                      {state === "Edit" && related.employee
-                                        ? related.employee.surname
-                                        : related.surname}
-                                    </h3>
-                                  </div>
-
-                                  <button
-                                    onClick={() => handleDeleteEmployee(related)}
-                                    type="button"
-                                    className="btn btn-sm btn-light-danger ">
-                                    <KTIcon
-                                      iconName="trash"
-                                      className="fs-3"
-                                    />
-                                  </button>
-                                </div>
-                              ) : null}
-                            </div>
-                          </div>
-                        )
-                      )}
-                  </div>
-                </div>
-              </div>
-              )}
-              {activeStep===5&&(
-                <Form.Group>
-                    <Form.Label>Yorum Giriniz</Form.Label>
-                  <Form.Control
-                  as="textarea"
-                  
-                  />
-                  
-                </Form.Group>
               )}
               <div className="d-flex flex-stack pt-10">
                 <div className="me-2">

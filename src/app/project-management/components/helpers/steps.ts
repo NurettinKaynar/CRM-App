@@ -1,7 +1,7 @@
-import {  StepCounter } from "../../../shared/StepperComp/StepperComp";
+import { StepCounter } from "../../../shared/StepperComp/StepperComp";
 
 export const steps: StepCounter = {
-  totalSteps: 3,
+  totalSteps: 4,
   currentStep: 1,
   stepData: [
     {
@@ -22,6 +22,13 @@ export const steps: StepCounter = {
       step: 3,
       title: "Çalışan Ekleme",
       description: "Projede Çalışacak Kişileri Ekleyin",
+      active: false,
+      completed: false,
+    },
+    {
+      step: 3,
+      title: "Görsel Ekleme",
+      description: "Proje Görsellerini Ekleyin",
       active: false,
       completed: false,
     },

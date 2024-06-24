@@ -3,24 +3,47 @@ import { FC, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { KTIcon } from "../../../../_metronic/helpers";
 import moment from "moment";
-import { getTotalActiveProjectList } from "../../core/_request";
+import { getAllProjects, getProjectList, getTotalActiveProjectList } from "../../core/_request";
 import { AxiosResponse } from "axios";
 
 const ProjectHeader: FC = () => {
   const location = useLocation();
-  const [totalProject, seTotalProject] = useState(0);
+  const [totalProjectCount, setTotalProjectCount] = useState(0);
+  const [totalActiveProjectCount, setTotalActiveProjectCount] = useState(0);
+  const [totalCompletedProjectCount, setTotalCompletedProjectCount] = useState(0);
+  const [ProjectList, setTotalProjectList] = useState<any[]>([]);
 
   const handleGetTotalProjects = () => {
-    getTotalActiveProjectList().then((res: AxiosResponse) => {
+
+    getAllProjects().then((res: AxiosResponse<any[]>) => {
       if (res.status === 200) {
-        seTotalProject(res.data);
+        console.log(res.data);
+        
+        setTotalProjectCount(res.data.length);
+        setTotalProjectList(res.data);
+
       }
     });
   };
 
+  const handleActiveProjectCount=()=>{
+    const completedProjectList=ProjectList.filter(x=>x.isCompleted)
+    setTotalCompletedProjectCount(completedProjectList.length);
+  }
+  const handleNotCompletedProjectCount=()=>{
+    const notCompleted=ProjectList.filter(x=>!x.isCompleted)
+    setTotalActiveProjectCount(notCompleted.length);
+  }
+
   useEffect(() => {
     handleGetTotalProjects();
   }, []);
+  useEffect(() => {
+  if(ProjectList){
+    handleActiveProjectCount()
+    handleNotCompletedProjectCount()
+  }
+  }, [ProjectList]);
   return (
     <>
       <div className="card mb-5 mb-xl-10">
@@ -52,11 +75,29 @@ const ProjectHeader: FC = () => {
 
                     <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
                       <div className="d-flex align-items-center">
-                        <div className="fs-2 fw-bolder">{totalProject}</div>
+                        <div className="fs-2 fw-bolder">{totalProjectCount}</div>
                       </div>
 
                       <div className="fw-bold fs-6 text-gray-500">
                         Toplam Proje Sayısı
+                      </div>
+                    </div>
+                    <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                      <div className="d-flex align-items-center">
+                        <div className="fs-2 fw-bolder">{totalActiveProjectCount}</div>
+                      </div>
+
+                      <div className="fw-bold fs-6 text-gray-500">
+                        Toplam Aktif Proje Sayısı
+                      </div>
+                    </div>
+                    <div className="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3">
+                      <div className="d-flex align-items-center">
+                        <div className="fs-2 fw-bolder">{totalCompletedProjectCount}</div>
+                      </div>
+
+                      <div className="fw-bold fs-6 text-gray-500">
+                        Toplam Tamamlanan Proje Sayısı
                       </div>
                     </div>
 

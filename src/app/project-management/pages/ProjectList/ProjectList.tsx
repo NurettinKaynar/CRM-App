@@ -9,6 +9,7 @@ import ActionButtons from "../../../shared/ActionsButtons/ActionButtons";
 import { toast } from "react-toastify";
 import moment from "moment";
 import AppInfoModal from "../../components/modals/AppInfoModal/AppInfoModal";
+import { Link } from "react-router-dom";
 const ProjectList = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -129,6 +130,7 @@ const ProjectList = () => {
                 <th>Açıklaması</th>
                 <th>Başlangıç Tarihi</th>
                 <th>Bitiş Tarihi</th>
+                <th>Proje Durumu</th>
                 <th>İşlemler</th>
               </tr>
             </thead>
@@ -140,18 +142,19 @@ const ProjectList = () => {
                     <td>{project.description}</td>
                     <td>{moment(project.startingDate).format("DD/MM/YYYY")}</td>
                     <td>{moment(project.endDate).format("DD/MM/YYYY")}</td>
+                    <td> <span className={`badge fw-bold me-auto ${project.isCompleted?"badge-light-success":"badge-light-primary"}`}>{project.isCompleted?"Tamamlandı":"Devam Ediyor"}</span></td>
                     <td className="d-flex align-items-center gap-2">
                       <ActionButtons
                         onClickEdit={() => handleEditProject(project.id)}
                         onClickDelete={() => deleteProjectOnList(project)}
                       />
-                      <button
-                        onClick={() => handleOpenInfoModal(project.id)}
-                        type="button"
+                      <Link
+                        
+                        to={`/project-operation/${project.id}`}
                         className="btn btn-active-light-primary btn-sm">
                         <KTIcon iconName="note-2" className="fs-2" />
                         Detaylar
-                      </button>
+                      </Link>
                     </td>
                   </tr>
                 ))

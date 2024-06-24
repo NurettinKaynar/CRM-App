@@ -19,7 +19,9 @@ import {
 
 import StepperComp, { Step } from "../../../../shared/StepperComp/StepperComp";
 import { steps } from "../../helpers/steps";
-import moment from "moment";
+import Swal from "sweetalert2";
+import { uploadImage } from "../../../../shared/core/_requests";
+import Dropzone from "react-dropzone";
 
 interface CreateAppModalProps {
   show: boolean;
@@ -34,11 +36,7 @@ const validate = Yup.object().shape({
   detail: Yup.string().required("Zorunlu Alan"),
   startingDate: Yup.string().required("Zorunlu Alan"),
   endDate: Yup.string().required("Zorunlu Alan"),
-});
-const stageDataFormValidate = Yup.object().shape({
-  description: Yup.string().required(),
-  startingDate: Yup.date().required(),
-  endDate: Yup.date().required(),
+  isCompleted: Yup.string().required("Zorunlu Alan"),
 });
 
 const CreateAppModal = ({
@@ -53,6 +51,7 @@ const CreateAppModal = ({
     detail: "",
     startingDate: "",
     endDate: "",
+    isCompleted: "false",
     stages: [],
     relateds: [],
   });
@@ -60,6 +59,39 @@ const CreateAppModal = ({
   const [activeStep, setActiveStep] = useState(1);
   const [adminListData, setAdminListData] = useState<any[]>([]);
   const [employeeListData, setEmployeeListData] = useState<any[]>([]);
+  const [files, setFiles] = useState<any[]>([]);
+
+  const handleDrop = (e: File[]) => {
+    console.log("gelen dosya", e);
+    const final: any[] = [];
+
+    e.forEach((file: any) => {
+      file.url = URL.createObjectURL(file);
+      final.push(file);
+    });
+    setFiles(final);
+  };
+
+  const handleUploadImage = (getProjectId?: number) => {
+    const requestParams = {
+      appProjectId: state === "Edit" ? projectId : getProjectId,
+    };
+    if (files.length > 0) {
+      files.map((file: File) => {
+        uploadImage(requestParams, file)
+          .then((res: AxiosResponse) => {
+            console.log("görsel yüklendi", res.data);
+          })
+          .catch((error: AxiosError) => {
+            console.error("görsel yüklenemedi", error);
+          });
+      });
+    }
+  };
+
+  const handleDeleteFile = (file: any) => {
+    setFiles(files.filter((x) => x !== file));
+  };
 
   const prevStep = useCallback(() => {
     setActiveStep(activeStep - 1);
@@ -104,13 +136,14 @@ const CreateAppModal = ({
         endDate: reqData.endDate || "",
         detail: reqData.detail || "",
         stages: reqData.stages || "",
+        isCompleted: String(reqData.isCompleted) || "",
         relateds: reqData.relateds || [],
       });
     });
   };
 
   useEffect(() => {
-    if (state === "Edit") {
+    if (state === "Edit" && projectId !== 0) {
       handleGetProject();
     } else {
       setInitialValues({
@@ -119,6 +152,7 @@ const CreateAppModal = ({
         startingDate: "",
         endDate: "",
         detail: "",
+        isCompleted: "false",
         stages: [],
         relateds: [],
       });
@@ -126,7 +160,7 @@ const CreateAppModal = ({
   }, [state, projectId, show]);
 
   useEffect(() => {
-    if (activeStep === 3) {
+    if (activeStep === 2) {
       handleGetAdminList();
     }
     if (activeStep === 3) {
@@ -155,7 +189,6 @@ const CreateAppModal = ({
     setEmployeeListData([]);
     formik.resetForm();
     AdminDataForm.resetForm();
-    stagedDataForm.resetForm();
     employeeDataForm.resetForm();
   };
 
@@ -186,22 +219,9 @@ const CreateAppModal = ({
     },
   });
 
-  const stagedDataForm = useFormik({
-    initialValues: {
-      description: "",
-      startingDate: "",
-      endDate: "",
-    },
-    validationSchema: stageDataFormValidate,
-    enableReinitialize: true,
-    onSubmit: (values) => {
-      handleStagesSubmitData(values);
-    },
-  });
-
   const AdminDataForm = useFormik({
     initialValues: {
-      adminId: "",
+      adminId: null,
       name: "",
       surname: "",
     },
@@ -212,6 +232,7 @@ const CreateAppModal = ({
         (x) => x.id === Number(values.adminId)
       );
       if (selectedAdmin) {
+        values.adminId = selectedAdmin.id;
         values.name = selectedAdmin.name;
         values.surname = selectedAdmin.surname;
       }
@@ -226,7 +247,7 @@ const CreateAppModal = ({
 
   const employeeDataForm = useFormik({
     initialValues: {
-      employeeId: "",
+      employeeId: null,
       name: "",
       surname: "",
     },
@@ -237,6 +258,7 @@ const CreateAppModal = ({
         (x) => x.id === Number(values.employeeId)
       );
       if (selectedEmployee) {
+        values.employeeId = selectedEmployee.id;
         values.name = selectedEmployee.name;
         values.surname = selectedEmployee.surname;
       }
@@ -248,44 +270,77 @@ const CreateAppModal = ({
     },
   });
 
-  const handleStagesSubmitData = (values: any) => {
-    const stages: any[] = formik.values.stages ? [...formik.values.stages] : [];
-    stages.push(values);
-    stagedDataForm.resetForm();
-    formik.setFieldValue("stages", stages);
-  };
-
   const handleDeleteAdmin = (related: any) => {
     let admin: any[] = formik.values.relateds;
     admin = admin.filter((x) => x !== related);
     formik.setFieldValue("relateds", admin);
   };
 
-  const handleDeleteStage = (stage: any) => {
-    let stageData: any[] = formik.values.stages;
-    stageData = stageData.filter((x) => x !== stage);
-    formik.setFieldValue("stages", stageData);
-  };
-
   const handleCreateObject = (formValues: any) => {
     const request = {
-      tite: formValues.title,
+      title: formValues.title,
       description: formValues.description,
       detail: formValues.detail,
       startingDate: formValues.startingDate,
       endDate: formValues.endDate,
+      isCompleted: formValues.isCompleted,
       relateds: formValues.relateds,
-      stages: formValues.stages,
     };
-    createProject(request)
-      .then((res: AxiosResponse<any>) => {
-        toast.success("Proje Başarıyla Eklendi");
-        handleCloseState();
-      })
-      .catch((err: AxiosError) => {
-        toast.error("Proje Eklenemedi");
-        console.error("Proje Eklenme Sorunu", err);
-      });
+
+    Swal.fire({
+      title: "Proje oluşturulacaktır onaylıyor musunuz?",
+      showCancelButton: true,
+      confirmButtonText: "Kaydet",
+      cancelButtonText: "Vazgeç",
+      customClass: {
+        confirmButton: "btn fw-bold btn-primary",
+        cancelButton: "btn btn-text fw-bold btn-active-light-primary",
+      },
+      icon: "question",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        createProject(request)
+          .then((res: AxiosResponse<any>) => {
+            if (res.status === 200) {
+              handleUploadImage(res.data.id);
+              console.log("res.data.project", res.data);
+              toast.success("Görev Başarıyla Oluşturuldu");
+              Swal.fire({
+                title: "Proje Oluşturuldu!",
+                icon: "success",
+                confirmButtonText: "Tamam",
+                customClass: {
+                  confirmButton: "btn fw-bold btn-primary",
+                },
+              }).then(() => {
+                handleCloseState();
+              });
+            }
+          })
+          .catch((err) => {
+            toast.error("Proje oluşturulamadı!");
+            Swal.fire({
+              title: "Proje oluşturulamadı!",
+              icon: "error",
+              confirmButtonText: "Tamam",
+              customClass: {
+                confirmButton: "btn fw-bold btn-primary",
+              },
+            }).then(() => {
+              handleCloseState();
+            });
+          });
+      } else if (result.isDismissed) {
+        Swal.fire({
+          title: "İptal Edildi",
+          icon: "info",
+          confirmButtonText: "Tamam",
+          customClass: {
+            confirmButton: "btn fw-bold btn-primary",
+          },
+        });
+      }
+    });
   };
 
   const handleEditProject = (formValues: any) => {
@@ -296,7 +351,8 @@ const CreateAppModal = ({
       detail: formValues.detail,
       startingDate: formValues.startingDate,
       endDate: formValues.endDate,
-      stages: formValues.stages,
+      isCompleted: formValues.isCompleted,
+
       relateds: formValues.relateds,
     };
 
@@ -330,11 +386,7 @@ const CreateAppModal = ({
           {/* begin::Aside*/}
           <div className="d-flex justify-content-center  justify-content-xl-start flex-row-auto w-100 w-xl-300px">
             {/* begin::Nav*/}
-            <StepperComp
-              currentStep={activeStep}
-              totalSteps={steps.totalSteps}
-              stepData={steps.stepData}
-            />
+            <StepperComp currentStep={activeStep} stepData={steps.stepData} />
             {/* end::Nav*/}
           </div>
           {/* begin::Aside*/}
@@ -466,108 +518,54 @@ const CreateAppModal = ({
                       placeholder="Bitiş Tarihi Giriniz"
                     />
                   </Form.Group>
+                  <div className="row">
+                    <Form.Label className="col-12">Proje Durumu</Form.Label>
+
+                    <Form.Group className="col">
+                      <label className="btn btn-outline btn-outline-dashed btn-active-light-primary  d-flex text-start p-6">
+                        <span className="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
+                          <Form.Control
+                            {...formik.getFieldProps("isCompleted")}
+                            type="radio"
+                            checked={Boolean(formik.values.isCompleted)}
+                            className="form-check-input"
+                            value="true"
+                            onChange={(e) =>
+                              formik.setFieldValue("isCompleted", true)
+                            }></Form.Control>
+                        </span>
+                        <span className="ms-5">
+                          <span className="fs-4 fw-bold text-gray-800 d-block">
+                            Tamamlandı
+                          </span>
+                        </span>
+                      </label>
+                    </Form.Group>
+
+                    <Form.Group className="col">
+                      <label className="btn btn-outline btn-outline-dashed btn-active-light-primary  d-flex text-start p-6">
+                        <span className="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
+                          <Form.Control
+                            {...formik.getFieldProps("isCompleted")}
+                            type="radio"
+                            checked={!Boolean(formik.values.isCompleted)}
+                            onChange={(e) =>
+                              formik.setFieldValue("isCompleted", false)
+                            }
+                            className="form-check-input"
+                            value="false"></Form.Control>
+                        </span>
+                        <span className="ms-5">
+                          <span className="fs-4 fw-bold text-gray-800 d-block">
+                            Tamamlanmadı
+                          </span>
+                        </span>
+                      </label>
+                    </Form.Group>
+                  </div>
                 </Form>
               ) : null}
-
               {activeStep === 2 ? (
-                <div className="row">
-                  <div className="col col-12">
-                    <Form className="row">
-                      <Form.Group
-                        className=" col-12 mb-3"
-                        controlId="exampleForm.ControlInput1">
-                        <Form.Label>Aşama Adı</Form.Label>
-                        <Form.Control
-                          placeholder="Aşama Adı"
-                          {...stagedDataForm.getFieldProps("description")}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="col-md-6 col-12 mb-3"
-                        controlId="exampleForm.ControlInput1">
-                        <Form.Label>Başlangıç Tarihi</Form.Label>
-
-                        <Flatpickr
-                          translate="yes"
-                          options={{
-                            locale: Turkish,
-                          }}
-                          {...stagedDataForm.getFieldProps("startingDate")}
-                          className="form-control"
-                          placeholder="Başlangıç Tarihi Giriniz"
-                          type="date"
-                          onChange={(value: any) => {
-                            stagedDataForm.setFieldValue(
-                              "startingDate",
-                              new Date(value)
-                            );
-                          }}
-                        />
-                      </Form.Group>
-                      <Form.Group
-                        className="col-md-6 col-12 mb-3"
-                        controlId="exampleForm.ControlInput1">
-                        <Form.Label>Bitiş Tarihi</Form.Label>
-
-                        <Flatpickr
-                          translate="yes"
-                          options={{
-                            locale: Turkish,
-                          }}
-                          {...stagedDataForm.getFieldProps("endDate")}
-                          className="form-control"
-                          placeholder="Bitiş Tarihi Giriniz"
-                          type="date"
-                          onChange={(value: any) => {
-                            stagedDataForm.setFieldValue(
-                              "endDate",
-                              new Date(value)
-                            );
-                          }}
-                        />
-                      </Form.Group>
-                    </Form>
-                  </div>
-                  <div className="col col-12">
-                    <button
-                      disabled={!stagedDataForm.isValid}
-                      type="button"
-                      className="btn btn-lg btn-primary me-3"
-                      onClick={stagedDataForm.submitForm}>
-                      <KTIcon iconName="plus" className="fs-3 me-1" /> Ekle
-                    </button>
-                  </div>
-                  <div className="col-12 mt-3">
-                    <div className="row">
-                      {formik.values.stages &&
-                        formik.values.stages.map((stage: any, idx: number) => (
-                          <div
-                            key={idx}
-                            className="col-12 card d-flex flex-row align-items-center justify-content-between p-3 m-2">
-                            <div className="d-flex flex-column gap-2">
-                              <h3>{stage.description}</h3>
-                              <span>
-                                {moment(stage.startingDate).format(
-                                  "DD/MM/YYYY"
-                                )}{" "}
-                                - {moment(stage.endDate).format("DD/MM/YYYY")}
-                              </span>
-                            </div>
-
-                            <button
-                              onClick={() => handleDeleteStage(stage)}
-                              type="button"
-                              className="btn btn-sm btn-light-danger ">
-                              <KTIcon iconName="trash" className="fs-3" />
-                            </button>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-
-              {activeStep === 3 ? (
                 <div className="row">
                   <div className="col-12">
                     <Form className="row">
@@ -586,7 +584,7 @@ const CreateAppModal = ({
                       <button
                         type="button"
                         className="btn btn-lg btn-light-primary me-3"
-                        onClick={AdminDataForm.submitForm}>
+                        onClick={() => AdminDataForm.submitForm()}>
                         <KTIcon iconName="plus" className="fs-3 me-1" /> Ekle
                       </button>
                     </Form>
@@ -596,7 +594,7 @@ const CreateAppModal = ({
                       {formik.values.relateds &&
                         formik.values.relateds.map(
                           (related: any, idx: number) =>
-                            related.admin ? (
+                            related.admin || related.adminId ? (
                               <div
                                 key={idx}
                                 className="col-12 card d-flex flex-row align-items-center justify-content-between p-3 m-2">
@@ -625,7 +623,7 @@ const CreateAppModal = ({
                   </div>
                 </div>
               ) : null}
-              {activeStep === 4 ? (
+              {activeStep === 3 ? (
                 <div className="row">
                   <div className="col-12">
                     <Form className="row">
@@ -691,6 +689,61 @@ const CreateAppModal = ({
                   </div>
                 </div>
               ) : null}
+              {activeStep === 4 && (
+                <Dropzone
+                  multiple={true}
+                  onDrop={handleDrop}
+                  maxFiles={5}
+                  accept={{
+                    "image/*": [".jpeg", ".png", ".jpg"],
+                  }}>
+                  {({ getRootProps, getInputProps }) => (
+                    <div {...getRootProps({})} className="dropzone">
+                      {files.length > 0 ? (
+                        <div className="d-flex flex-wrap">
+                          {files.map((file, index) => (
+                            <div
+                              key={index}
+                              className="dz-preview  dz-image-preview  position-relative shadow-lg w-75px bg-white rounded">
+                              <div className="dz-image rounded">
+                                <img
+                                  className="w-75px"
+                                  src={file.url}
+                                  alt={file.name}
+                                />
+                              </div>
+                              <span
+                                onClick={() => handleDeleteFile(file)}
+                                className="dz-remove position-absolute"></span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <>
+                          <div className="dz-message needsclick">
+                            <KTIcon
+                              iconName="file-up"
+                              className="fs-3x text-primary"
+                            />
+                          </div>
+                          <div className="ms-4 d-flex flex-column">
+                            <h3 className="fs-5 fw-bold text-gray-900 mb-1">
+                              Sürükle-bırak yada yükle
+                            </h3>
+                            <span className="fs-7 fw-semibold text-gray-500">
+                              Sadece 5 dosya yükleyebilirsiniz
+                            </span>
+                            <span className="fs-7 fw-semibold text-gray-500">
+                              İzin verilen dosya türleri: .jpg, .jpeg, .png
+                            </span>
+                          </div>
+                        </>
+                      )}
+                      <input {...getInputProps({ multiple: true })} />
+                    </div>
+                  )}
+                </Dropzone>
+              )}
 
               {/*begin::Actions */}
               <div className="d-flex flex-stack pt-10">

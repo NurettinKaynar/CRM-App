@@ -8,11 +8,19 @@ import {
 import { ProjectHeader } from "./components/ProjectHeader/ProjectHeader";
 import Events from "./pages/Events/Events";
 import ProjectList from "./pages/ProjectList/ProjectList";
+import { ProjectDetailsHeader } from "./components/ProjectDetailsHeader/ProjectDetailsHeader";
+import ProjectDetails from "./pages/ProjectDetails/ProjectDetails";
 
 const usersBreadcrumbs: Array<PageLink> = [
   {
     title: "Proje Listesi",
     path: "/project-operation/projects",
+    isSeparator: false,
+    isActive: false,
+  },
+  {
+    title: "Proje Detayları",
+    path: "/project-operation/:id",
     isSeparator: false,
     isActive: false,
   },
@@ -60,6 +68,25 @@ const ProjectWrapper = () => {
                     <ToolbarWrapper />
                     <ProjectHeader />
                     <Events />
+                  </div>
+                </div>
+              </Content>
+            </>
+          }
+        />
+        <Route
+          path=":id"
+          element={
+            <>
+              <PageTitle breadcrumbs={usersBreadcrumbs}>
+                Proje Detayları
+              </PageTitle>
+              <Content>
+                <div className="app-content ">
+                  <div className="app-container container-xxl">
+                    <ToolbarWrapper />
+                    <ProjectDetailsHeader />
+                   <ProjectDetails/>
                   </div>
                 </div>
               </Content>

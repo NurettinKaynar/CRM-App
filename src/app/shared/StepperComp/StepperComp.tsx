@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
 
 export interface StepCounter {
   currentStep: number;
-  totalSteps: number;
   stepData: Step[];
+  totalSteps: number;
 }
 
 export interface Step {
@@ -16,11 +15,9 @@ export interface Step {
 
 const StepperComp = ({
   currentStep,
-  totalSteps,
   stepData,
 }: {
   currentStep: number;
-  totalSteps: number;
   stepData: Step[];
 }) => {
   return (

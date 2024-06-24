@@ -36,7 +36,7 @@ const validate = Yup.object().shape({
   detail: Yup.string().required("Zorunlu Alan"),
   startingDate: Yup.string().required("Zorunlu Alan"),
   endDate: Yup.string().required("Zorunlu Alan"),
-  isCompleted: Yup.bool().required("Zorunlu Alan"),
+  isCompleted: Yup.string().required("Zorunlu Alan"),
 });
 
 const CreateAppModal = ({
@@ -51,7 +51,7 @@ const CreateAppModal = ({
     detail: "",
     startingDate: "",
     endDate: "",
-    isCompleted: false,
+    isCompleted: "false",
     stages: [],
     relateds: [],
   });
@@ -136,7 +136,7 @@ const CreateAppModal = ({
         endDate: reqData.endDate || "",
         detail: reqData.detail || "",
         stages: reqData.stages || "",
-        isCompleted: reqData.isCompleted || "",
+        isCompleted: String(reqData.isCompleted) || "",
         relateds: reqData.relateds || [],
       });
     });
@@ -152,7 +152,7 @@ const CreateAppModal = ({
         startingDate: "",
         endDate: "",
         detail: "",
-        isCompleted: false,
+        isCompleted: "false",
         stages: [],
         relateds: [],
       });
@@ -527,9 +527,9 @@ const CreateAppModal = ({
                           <Form.Control
                             {...formik.getFieldProps("isCompleted")}
                             type="radio"
-                            checked={formik.values.isCompleted}
+                            checked={Boolean(formik.values.isCompleted)}
                             className="form-check-input"
-                            value={true}
+                            value="true"
                             onChange={(e) =>
                               formik.setFieldValue("isCompleted", true)
                             }></Form.Control>
@@ -548,12 +548,12 @@ const CreateAppModal = ({
                           <Form.Control
                             {...formik.getFieldProps("isCompleted")}
                             type="radio"
-                            checked={!formik.values.isCompleted}
+                            checked={!Boolean(formik.values.isCompleted)}
                             onChange={(e) =>
                               formik.setFieldValue("isCompleted", false)
                             }
                             className="form-check-input"
-                            value={false}></Form.Control>
+                            value="false"></Form.Control>
                         </span>
                         <span className="ms-5">
                           <span className="fs-4 fw-bold text-gray-800 d-block">

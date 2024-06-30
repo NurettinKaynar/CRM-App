@@ -138,18 +138,27 @@ const ProjectList = () => {
               {projects.length > 0 ? (
                 projects.map((project, index) => (
                   <tr key={index}>
-                    <td>{project.tite}</td>
+                    <td>{project.title}</td>
                     <td>{project.description}</td>
                     <td>{moment(project.startingDate).format("DD/MM/YYYY")}</td>
                     <td>{moment(project.endDate).format("DD/MM/YYYY")}</td>
-                    <td> <span className={`badge fw-bold me-auto ${project.isCompleted?"badge-light-success":"badge-light-primary"}`}>{project.isCompleted?"Tamamlandı":"Devam Ediyor"}</span></td>
+                    <td>
+                      {" "}
+                      <span
+                        className={`badge fw-bold me-auto ${
+                          project.isCompleted
+                            ? "badge-light-success"
+                            : "badge-light-primary"
+                        }`}>
+                        {project.isCompleted ? "Tamamlandı" : "Devam Ediyor"}
+                      </span>
+                    </td>
                     <td className="d-flex align-items-center gap-2">
                       <ActionButtons
                         onClickEdit={() => handleEditProject(project.id)}
                         onClickDelete={() => deleteProjectOnList(project)}
                       />
                       <Link
-                        
                         to={`/project-operation/${project.id}`}
                         className="btn btn-active-light-primary btn-sm">
                         <KTIcon iconName="note-2" className="fs-2" />

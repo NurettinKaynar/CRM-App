@@ -15,7 +15,10 @@ import "./_metronic/assets/keenicons/solid/style.css";
 import "./_metronic/assets/sass/style.scss";
 import { AppRoutes } from "./app/routing/AppRoutes";
 import { AuthProvider, setupAxios } from "./app/modules/auth";
+import moment from "moment";
+import "moment/dist/locale/tr";
 
+moment.locale("tr");
 setupAxios(axios);
 
 Chart.register(...registerables);

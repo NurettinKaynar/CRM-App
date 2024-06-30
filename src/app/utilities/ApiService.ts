@@ -29,4 +29,12 @@ export class ApiUrls {
   public static readonly DELETE_TASK = "AppTask/DeleteAsy";
   public static readonly GET_PERSONNEL_BY_ID = "Employee/GetByIdAsy";
   public static readonly UPLOAD_IMAGE = "Image/ImageUpload";
+  public static readonly GET_COMPLETED_TASKS_BY_MONTHLY =
+    "AppProject/GetComplatedTaskByMontly";
+  public static readonly GET_IN_PROGRESS_TASKS_BY_MONTHLY =
+    "AppProject/GetNotComplatedTaskByMontly";
+  public static readonly GET_PROJECT_BY_DATE = "AppProject/GetProjectByDate";
+  public static readonly GET_LASTED_FILES = "AppFile/GetLastedFiles";
+  public static readonly DELETE_FILE_BY_ID = "AppFile/DeleteAsy";
+  public static readonly UPLOAD_FILE_BY_ID = "AppFile/FileUpload";
 }

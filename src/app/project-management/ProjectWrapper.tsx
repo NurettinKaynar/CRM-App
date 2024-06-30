@@ -1,15 +1,15 @@
+import { useState } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { Content } from "../../_metronic/layout/components/content";
 import { ToolbarWrapper } from "../../_metronic/layout/components/toolbar";
-import {
-  PageLink,
-  PageTitle
-} from "../../_metronic/layout/core";
+import { PageLink, PageTitle } from "../../_metronic/layout/core";
+import Overview from "./components/Overview/Overview";
+import { ProjectDetailsHeader } from "./components/ProjectDetailsHeader/ProjectDetailsHeader";
 import { ProjectHeader } from "./components/ProjectHeader/ProjectHeader";
 import Events from "./pages/Events/Events";
 import ProjectList from "./pages/ProjectList/ProjectList";
-import { ProjectDetailsHeader } from "./components/ProjectDetailsHeader/ProjectDetailsHeader";
-import ProjectDetails from "./pages/ProjectDetails/ProjectDetails";
+import TaskList from "./components/TaskList/TaskList";
+import UserList from "./components/Users/UserList";
 
 const usersBreadcrumbs: Array<PageLink> = [
   {
@@ -33,6 +33,10 @@ const usersBreadcrumbs: Array<PageLink> = [
 ];
 
 const ProjectWrapper = () => {
+  const [activeTab, setActiveTab] = useState<number>(1);
+  const handleChangeTab = (e: number) => {
+    setActiveTab(e);
+  };
   return (
     <Routes>
       <Route element={<Outlet />}>
@@ -85,8 +89,14 @@ const ProjectWrapper = () => {
                 <div className="app-content ">
                   <div className="app-container container-xxl">
                     <ToolbarWrapper />
-                    <ProjectDetailsHeader />
-                   <ProjectDetails/>
+                    <ProjectDetailsHeader
+                      changeTab={(e) => handleChangeTab(e)}
+                    />
+                    <div key={Math.random()} className="p-5">
+                      {activeTab === 1 && <Overview />}
+                      {activeTab === 2 && <TaskList />}
+                      {activeTab === 3 && <UserList />}
+                    </div>
                   </div>
                 </div>
               </Content>

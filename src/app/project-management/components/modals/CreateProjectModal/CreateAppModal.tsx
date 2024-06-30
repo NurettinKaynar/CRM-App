@@ -130,7 +130,7 @@ const CreateAppModal = ({
 
       const reqData = res.data;
       setInitialValues({
-        title: reqData.tite || "",
+        title: reqData.title || "",
         description: reqData.description || "",
         startingDate: reqData.startingDate || "",
         endDate: reqData.endDate || "",

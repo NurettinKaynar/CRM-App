@@ -1,9 +1,11 @@
-import React from 'react'
+import Overview from "../../components/Overview/Overview";
 
 const ProjectDetails = () => {
   return (
-    <div>ProjectDetails</div>
-  )
-}
+    <div>
+      <div>ProjectDetails</div>
+    </div>
+  );
+};
 
-export default ProjectDetails
+export default ProjectDetails;

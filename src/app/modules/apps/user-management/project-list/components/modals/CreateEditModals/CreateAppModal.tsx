@@ -41,7 +41,7 @@ const CreateAppModal = ({
       setLoading(true);
 
       const request = {
-        tite: values.title,
+        title: values.title,
         description: values.description,
         detail: values.detail,
         startingDate: values.startingDate,

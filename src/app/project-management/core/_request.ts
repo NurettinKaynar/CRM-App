@@ -42,6 +42,37 @@ const getProjectById = (projectId: number): Promise<any> => {
   });
 };
 
+const getCompletedTasks = (): Promise<any> => {
+  return axios.get(`${API_URL}${ApiUrls.GET_COMPLETED_TASKS_BY_MONTHLY}`);
+};
+const getInProgressTasks = (): Promise<any> => {
+  return axios.get(`${API_URL}${ApiUrls.GET_IN_PROGRESS_TASKS_BY_MONTHLY}`);
+};
+
+const getProjectByDate = (dateTime: string): Promise<any> => {
+  return axios.get(`${API_URL}${ApiUrls.GET_PROJECT_BY_DATE}`, {
+    params: { dateTime: dateTime },
+  });
+};
+
+const getLastedFiles = (): Promise<any> => {
+  return axios.get(`${API_URL}${ApiUrls.GET_LASTED_FILES}`);
+};
+
+const deleteFile = (fileId: number): Promise<any> => {
+  return axios.delete(`${API_URL}${ApiUrls.DELETE_FILE_BY_ID}`, {
+    params: { id: fileId },
+  });
+};
+
+const uploadFile = (file: File, projectId: number): Promise<any> => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return axios.post(`${API_URL}${ApiUrls.UPLOAD_FILE_BY_ID}`, formData, {
+    params: { approjectid: projectId },
+  });
+};
+
 export {
   createProject,
   getProjectList,
@@ -52,4 +83,10 @@ export {
   getTotalActiveProjectList,
   getAllProjects,
   getProjectById,
+  getCompletedTasks,
+  getInProgressTasks,
+  getProjectByDate,
+  getLastedFiles,
+  deleteFile,
+  uploadFile,
 };

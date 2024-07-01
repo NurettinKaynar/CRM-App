@@ -20,8 +20,8 @@ const SummaryTaskPieChart = () => {
             total: {
               show: true,
               label: "Görev Özeti",
-              formatter: function (w) {
-                return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+              formatter: function (w:any) {
+                return w.globals.seriesTotals.reduce((a:any, b:any) => a + b, 0);
               },
             },
           },
@@ -41,9 +41,10 @@ const SummaryTaskPieChart = () => {
         <div className="d-flex justify-content-between align-items-center">
           <div style={{ width: "350px", height: "380px" }}>
             <Chart
+            // @ts-ignore
               options={pieChartOptions}
               series={pieChartSeries}
-              type="donut"
+              type={"pie"}
               width="100%"
               height="100%"
             />
